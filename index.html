@@ -1,0 +1,307 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>AI Detective Stories</title>
+
+  <link rel="stylesheet" href="dist/reset.css" />
+  <link rel="stylesheet" href="dist/reveal.css" />
+  <link rel="stylesheet" href="dist/theme/black.css" />
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+
+  <style>
+    /* Centered title+subtitle layout */
+
+/* === CHANGE: global font family to Avenir === */
+<!--:root, body, .reveal, .slides, h1, h2, h3, h4, h5, h6, p, li {-->
+    <!--font-family: 'Avenir', 'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif !important; /* CHANGE */-->
+<!--}-->
+:root, body, .reveal, .slides, h1, h2, h3, h4, h5, h6, p, li {
+  font-family: 'Graphik', 'Graphik Web', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+}
+/* === Override default all-caps headings === */
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  text-transform: none !important; /* keep original casing */
+}
+    .title-slide {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+    }
+
+    /* Adjusted font sizes for readability */
+    .title-slide h1 {
+      font-size: 1.5em;   /* was 2.5em */
+      margin-bottom: .4em;
+    }
+    .title-slide h2 {
+      font-size: 0.6em;   /* was 1.5em */
+      font-weight: 400;
+      margin-bottom: 2em;
+      font-weight: bold;
+    }
+    .title-slide h5 {
+      font-size: 0.5em;
+      font-weight: 300;
+      margin-bottom: .3em;
+    }
+    .slide h2 {
+      font-size: 1em;   /* was 1.5em */
+      font-weight: 400;
+      margin-bottom: 0em;
+      font-weight: bold;
+
+      <!--line-height: 1.4;-->
+    }
+    .slide h3 {
+      font-size: 0.6em;   /* was 1.2em */
+      font-weight: 100;
+      <!--line-height: 1.5;-->
+    }
+
+    /* Dark overlay for bright backgrounds */
+    .has-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      pointer-events: none;
+    }
+
+    /* Make iframes fill the slide nicely */
+    .embed-frame {
+
+        width: 100%;
+        height: 65vh; /* smaller, leaves space below */
+        margin-bottom: 5vh; /* relative to viewport */
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Slide 1: Title -->
+      <section
+        class="has-bg"
+        data-background-image="figures/titlepage.png"
+        data-background-opacity="0.6"
+        data-background-size="cover"
+        data-background-position="center"
+      >
+        <div class="title-slide">
+          <h1>AI Detective Stories 🕵️</h1>
+          <br>
+          <h2>
+            How Computers Learn to Read Financial Secrets<br />
+            AI偵探故事：電腦如何學會解讀金融秘密
+          </h2>
+          <br>
+          <h5>
+            Dr. Chuan-Ju Wang (王釧茹)<br>
+            CFDA Lab, Academia Sinica<br>
+            中央研究院 計算金融與資料分析實驗室
+          </h5>
+        </div>
+      </section>
+
+      <!-- Slide 2: Challenges -->
+      <section>
+        <div class="slide">
+          <!--<h2>The Challenge - Meet Genie</h2>-->
+          <!--<h3>The Overwhelmed Financial Analyst</h3>-->
+          <h2>挑戰 ─ 與 Genie 相遇</h2>
+          <h3>疲於奔命的金融分析師</h3>
+          <iframe class="embed-frame" src="slides/challenges_cn.html"
+                  title="Challenges slide"></iframe>
+        </div>
+      </section>
+
+      <!-- Slide 3: Relations -->
+      <section>
+        <div class="slide">
+          <!--<h2>The Hidden Mystery</h2>-->
+          <!--<h3>What connects these companies?</h3>-->
+          <h2>隱藏的謎團</h2>
+          <h3>這些公司之間的連結是什麼？</h3>
+          <iframe class="embed-frame" src="slides/relation_cn.html"
+                  title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>The Scale of Information Explosion</h2>-->
+          <!--<h3>The Financial Data Avalanche</h3>-->
+          <h2>資訊爆炸的規模</h2>
+          <h3>金融資料的雪崩</h3>
+          <iframe class="embed-frame" src="slides/scale_cn.html"
+                  title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Real-World Consequences</h2>-->
+          <!--<h3>When Connections Are Missed</h3>-->
+          <h2>現實世界的後果</h2>
+          <h3>當連結被忽略時</h3>
+          <iframe class="embed-frame" src="slides/impact_cn.html"
+                  title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>The AI Solution - SURF System</h2>-->
+          <!--<h3>System to Unveil Risk Relations between Firms</h3>-->
+          <h2>AI 解決方案 - SURF 系統</h2>
+          <h3>企業間風險關聯揭示系統</h3>
+          <iframe class="embed-frame" src="slides/surf_system_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>SURF Technical Innovation</h2>-->
+          <!--<h3>How SURF Detects Hidden Connections</h3>-->
+          <h2>SURF 技術創新</h2>
+          <h3>如何偵測隱藏的連結</h3>
+          <iframe class="embed-frame" src="slides/surf_learning_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>The AI Solution - FISH System</h2>-->
+          <!--<h3>Financial Interactive System for Signal Highlighting</h3>-->
+          <h2>AI 解決方案 - FISH 系統</h2>
+          <h3>金融互動式信號標註系統</h3>
+          <iframe class="embed-frame" src="slides/fish_system_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>FISH in Action - Real Example</h2>-->
+          <!--<h3>Estée Lauder Companies 2015 vs 2016</h3>-->
+          <h2>FISH 實戰 ─ 真實案例</h2>
+          <h3>雅詩蘭黛公司 2015 年 vs 2016 年</h3>
+          <iframe class="embed-frame" src="slides/fish_example_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Genie’s Transformation</h2>-->
+          <!--<h3>From Overwhelmed to Empowered</h3>-->
+          <h2>Genie 的 AI 轉型之路</h2>
+          <h3>從疲於奔命到充滿能量</h3>
+          <iframe class="embed-frame" src="slides/before_after_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Industry Impact Numbers</h2>-->
+          <!--<h3>Measurable Transformation</h3>-->
+          <h2>產業影響數據</h2>
+          <h3>可衡量的轉型</h3>
+          <iframe class="embed-frame" src="slides/impact_metrics_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>How This Changes Finance</h2>-->
+          <!--<h3>Democratizing Financial Analysis</h3>-->
+          <h2>這如何改變金融業</h2>
+          <h3>讓金融分析更普及化</h3>
+          <iframe class="embed-frame" src="slides/accessibility_pyramid_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Technology Behind the Magic</h2>-->
+          <!--<h3>Natural Language Processing at Work</h3>-->
+          <h2>魔法背後的技術</h2>
+          <h3>自然語言處理的應用</h3>
+          <iframe class="embed-frame" src="slides/ai_pipeline_flowchart_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Career Opportunities for You</h2>-->
+          <!--<h3>The Future Workforce</h3>-->  
+          <h2>你的職涯機會</h2>
+          <h3>未來的工作力</h3>
+          <iframe class="embed-frame" src="slides/career_pathway_diagram_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Ethical Considerations</h2>-->
+          <!--<h3>Responsible AI Development</h3>-->
+          <h2>AI 金融應用倫理框架</h2>
+          <h3>負責任的 AI 發展</h3>
+          <iframe class="embed-frame" src="slides/ethics_framework_diagram_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>What's Next</h2>-->
+          <!--<h3>Future Research Directions</h3>-->
+          <h2>接下來是什麼?</h2>
+          <h3>未來研究方向</h3>
+          <iframe class="embed-frame" src="slides/future_roadmap_timeline_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Your Role in This Story</h2>-->
+          <!--<h3>How You Can Get Involved</h3>-->
+          <h2>你在這個故事中的角色</h2>
+          <h3>你如何參與其中</h3>
+          <iframe class="embed-frame" src="slides/student_pathway_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Key Takeaways</h2>-->
+          <!--<h3>Remember These Points</h3>-->
+          <h2>重點回顧</h2>
+          <h3>請記住這些要點</h3>
+          <iframe class="embed-frame" src="slides/summary_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+      <section>
+        <div class="slide">
+          <!--<h2>Key Takeaways</h2>-->
+          <!--<h3>Remember These Points</h3>-->
+          <iframe class="embed-frame" src="slides/thankyou_cn.html" title="Relation slide"></iframe>
+        </div>
+      </section>
+
+
+
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+    });
+  </script>
+</body>
+</html>

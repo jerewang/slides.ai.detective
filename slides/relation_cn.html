@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隱藏連結揭示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 1000px;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .companies-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.6s forwards;
+        }
+
+        .company {
+            text-align: center;
+        }
+
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .nvidia-logo {
+            background: linear-gradient(135deg, #76b900, #5a9216);
+            box-shadow: 0 0 20px rgba(118, 185, 0, 0.4);
+        }
+
+        .wabtec-logo {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            animation-delay: 0.3s;
+        }
+
+        .company-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .company-desc {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .question-section {
+            margin: 30px 0;
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.9s forwards;
+        }
+
+        .question-mark {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            margin: 0 auto 20px;
+            animation: questionPulse 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        @keyframes questionPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(139, 92, 246, 0.7); }
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .click-hint {
+            font-size: 14px;
+            color: rgba(139, 92, 246, 0.8);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.5; }
+        }
+
+        /* 揭示階段 */
+        .reveal-stage {
+            display: none;
+            opacity: 0;
+        }
+
+        .reveal-stage.show {
+            display: block;
+            animation: revealIn 1s ease-out forwards;
+        }
+
+        @keyframes revealIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .connection-line {
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #ef4444);
+            margin: 40px auto;
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            animation: lineGrow 1.5s ease-out forwards;
+            width: 0;
+        }
+
+        @keyframes lineGrow {
+            from { width: 0; }
+            to { width: 60%; }
+        }
+
+        .connection-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            border-radius: 25px;
+            padding: 15px 25px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ef4444;
+            margin: 20px 0;
+            animation: badgeGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.7); }
+        }
+
+        .impact-summary {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .impact-item {
+            text-align: center;
+            animation: impactSlide 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .impact-item:nth-child(1) { animation-delay: 0.5s; }
+        .impact-item:nth-child(2) { animation-delay: 0.8s; }
+
+        @keyframes impactSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .impact-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .impact-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .impact-detail {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.2));
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .reset-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .reset-btn.show { display: block; }
+
+        @media (max-width: 768px) {
+            .companies-row { flex-direction: column; gap: 30px; }
+            .impact-summary { flex-direction: column; gap: 20px; }
+            .title { font-size: 24px; }
+            .question-text { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">這兩家公司有什麼共同點？</div>
+        
+        <div class="companies-row">
+            <div class="company">
+                <div class="company-logo nvidia-logo">NVIDIA</div>
+                <div class="company-name">Nvidia (NVDA)</div>
+                <div class="company-desc">高性能GPU和AI晶片</div>
+            </div>
+            
+            <div class="company">
+                <div class="company-logo wabtec-logo">WABTEC</div>
+                <div class="company-name">Wabtec (WAB)</div>
+                <div class="company-desc">先進鐵路和運輸解決方案</div>
+            </div>
+        </div>
+
+        <div class="question-section" id="questionSection">
+            <div class="question-mark" id="questionMark">?</div>
+            <div class="question-text">Any ideas what they have in common?</div>
+            <div class="click-hint">點擊揭示答案</div>
+        </div>
+
+        <div class="reveal-stage" id="revealStage">
+            <div class="connection-line"></div>
+            <div class="connection-badge">
+                ⚠️ 半導體供應鏈中斷 (2022)
+            </div>
+            
+            <div class="impact-summary">
+                <div class="impact-item">
+                    <div class="impact-icon">🎮</div>
+                    <div class="impact-text">Nvidia</div>
+                    <div class="impact-detail"><span class="highlight">GPU價格暴漲</span>，晶片短缺影響生產</div>
+                </div>
+                
+                <div class="impact-item">
+                    <div class="impact-icon">🚄</div>
+                    <div class="impact-text">Wabtec</div>
+                    <div class="impact-detail"><span class="highlight">鐵路元件短缺</span>，製造延遲</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">重置</button>
+
+    <script>
+        const questionSection = document.getElementById('questionSection');
+        const revealStage = document.getElementById('revealStage');
+        const resetBtn = document.getElementById('resetBtn');
+        let isRevealed = false;
+
+        function reveal() {
+            if (isRevealed) return;
+            isRevealed = true;
+            
+            questionSection.style.animation = 'fadeOut 0.5s ease-out forwards';
+            setTimeout(() => {
+                questionSection.style.display = 'none';
+                revealStage.classList.add('show');
+                resetBtn.classList.add('show');
+            }, 500);
+        }
+
+        function reset() {
+            isRevealed = false;
+            revealStage.classList.remove('show');
+            resetBtn.classList.remove('show');
+            
+            setTimeout(() => {
+                questionSection.style.display = 'block';
+                questionSection.style.animation = 'fadeIn 0.5s ease-out forwards';
+            }, 300);
+        }
+
+        // 添加淡出動畫
+        const style = document.createElement('style');
+        style.textContent = `@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }`;
+        document.head.appendChild(style);
+
+        // 事件監聽
+        document.body.addEventListener('click', (e) => {
+            if (!isRevealed && e.target !== resetBtn) reveal();
+        });
+        
+        resetBtn.addEventListener('click', reset);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                isRevealed ? reset() : reveal();
+            }
+        });
+    </script>
+</body>
+</html>

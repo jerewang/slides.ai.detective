@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 金融分析的影響力革命</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #22c55e, #3b82f6, #8b5cf6);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .success-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            border-radius: 25px;
+            padding: 10px 25px;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #22c55e;
+            animation: successPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes successPulse {
+            0%, 100% {
+                box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(34, 197, 94, 0.6);
+                transform: scale(1.02);
+            }
+        }
+
+        .metrics-hero {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-metric {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%,
+                rgba(30, 41, 59, 0.98) 100%);
+            border-radius: 20px;
+            padding: 35px 30px;
+            backdrop-filter: blur(25px);
+            border: 3px solid;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .hero-metric:hover {
+            transform: translateY(-10px) scale(1.03);
+        }
+
+        .hero-metric::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hero-metric:hover::before {
+            opacity: 1;
+        }
+
+        .speed-metric {
+            border-color: rgba(34, 197, 94, 0.5);
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%,
+                rgba(22, 101, 52, 0.1) 100%);
+        }
+
+        .speed-metric::before {
+            background: linear-gradient(90deg, transparent, #22c55e, transparent);
+        }
+
+        .efficiency-metric {
+            border-color: rgba(59, 130, 246, 0.5);
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%,
+                rgba(37, 99, 235, 0.1) 100%);
+        }
+
+        .efficiency-metric::before {
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        }
+
+        .discovery-metric {
+            border-color: rgba(168, 85, 247, 0.5);
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%,
+                rgba(124, 58, 237, 0.1) 100%);
+        }
+
+        .discovery-metric::before {
+            background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+        }
+
+        .adoption-metric {
+            border-color: rgba(245, 158, 11, 0.5);
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%,
+                rgba(217, 119, 6, 0.1) 100%);
+        }
+
+        .adoption-metric::before {
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+        }
+
+        .metric-icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 40px;
+            position: relative;
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .speed-metric .metric-icon {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            animation-delay: 0s;
+        }
+
+        .efficiency-metric .metric-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+            animation-delay: 0.5s;
+        }
+
+        .discovery-metric .metric-icon {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+            animation-delay: 1s;
+        }
+
+        .adoption-metric .metric-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+            animation-delay: 1.5s;
+        }
+
+        .metric-value {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            display: block;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            line-height: 1;
+        }
+
+        .speed-metric .metric-value {
+            color: #22c55e;
+        }
+
+        .efficiency-metric .metric-value {
+            color: #3b82f6;
+        }
+
+        .discovery-metric .metric-value {
+            color: #8b5cf6;
+        }
+
+        .adoption-metric .metric-value {
+            color: #f59e0b;
+        }
+
+        .metric-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .metric-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .comparison-showcase {
+            margin-top: 80px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 1.5s forwards;
+        }
+
+        .showcase-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 50px;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        .scenario {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 2px solid;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .scenario:hover {
+            transform: translateY(-5px);
+        }
+
+        .before-scenario {
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .after-scenario {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .scenario-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .before-scenario .scenario-title {
+            color: #ef4444;
+        }
+
+        .after-scenario .scenario-title {
+            color: #22c55e;
+        }
+
+        .scenario-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .scenario-stat {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid;
+        }
+
+        .before-scenario .scenario-stat {
+            border-left-color: #ef4444;
+        }
+
+        .after-scenario .scenario-stat {
+            border-left-color: #22c55e;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .before-scenario .stat-number {
+            color: #ef4444;
+        }
+
+        .after-scenario .stat-number {
+            color: #22c55e;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .transformation-arrow {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            animation: arrowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 40px rgba(34, 197, 94, 0.7);
+            }
+        }
+
+        .real-world-impact {
+            background: linear-gradient(135deg, 
+                rgba(34, 197, 94, 0.1) 0%,
+                rgba(59, 130, 246, 0.1) 100%);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            opacity: 0;
+            animation: slideInUp 1s ease-out 2s forwards;
+        }
+
+        .impact-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .impact-content {
+            text-align: center;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .companies-using {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .company-badge {
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.2) 0%,
+                rgba(59, 130, 246, 0.1) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 15px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #60a5fa;
+            animation: companyGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes companyGlow {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        .company-badge:nth-child(2) { animation-delay: 0.5s; }
+        .company-badge:nth-child(3) { animation-delay: 1s; }
+        .company-badge:nth-child(4) { animation-delay: 1.5s; }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .metrics-hero {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .before-after {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .transformation-arrow {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+                margin: 20px auto;
+            }
+
+            .companies-using {
+                gap: 15px;
+            }
+
+            .metric-value {
+                font-size: 40px;
+            }
+        }
+
+        /* 粒子效果 */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(34, 197, 94, 0.4);
+            border-radius: 50%;
+            animation: particleFloat 18s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-40px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% {
+                transform: translateY(-10vh) translateX(40px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="main-title">AI 金融分析的影響力革命</div>
+            <div class="subtitle">轉型成果：從數據到決策的突破性進展</div>
+            <div class="success-badge">
+                ✨ 真實公司正在使用這些洞察進行投資決策
+            </div>
+        </div>
+
+        <div class="metrics-hero">
+            <div class="hero-metric speed-metric">
+                <div class="metric-icon">⚡</div>
+                <div class="metric-value" data-target="50">0</div>
+                <div class="metric-label">處理速度提升</div>
+                <div class="metric-description">
+                    相較於傳統人工分析，AI系統實現50倍速度提升，讓即時分析成為可能
+                </div>
+            </div>
+
+            <div class="hero-metric efficiency-metric">
+                <div class="metric-icon">📈</div>
+                <div class="metric-value" data-target="80">0</div>
+                <div class="metric-label">分析時間縮減</div>
+                <div class="metric-description">
+                    文件分析時間減少80%，從數週縮短至數小時，大幅提升決策效率
+                </div>
+            </div>
+
+            <div class="hero-metric discovery-metric">
+                <div class="metric-icon">🔗</div>
+                <div class="metric-value" data-target="10000">0</div>
+                <div class="metric-label">新發現連結數</div>
+                <div class="metric-description">
+                    發現超過10,000個隱藏的企業關聯，揭示傳統分析無法察覺的風險與機會
+                </div>
+            </div>
+
+            <div class="hero-metric adoption-metric">
+                <div class="metric-icon">🏢</div>
+                <div class="metric-value">100%</div>
+                <div class="metric-label">實際應用率</div>
+                <div class="metric-description">
+                    真實公司正在使用這些AI洞察制定投資策略，獲得競爭優勢
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-showcase">
+            <div class="showcase-title">轉型前後對比：革命性的變化</div>
+            
+            <div class="before-after">
+                <div class="scenario before-scenario">
+                    <div class="scenario-title">🐌 傳統分析方式</div>
+                    <div class="scenario-stats">
+                        <div class="scenario-stat">
+                            <div class="stat-number">2-4 週</div>
+                            <div class="stat-label">單一公司深度分析時間</div>
+                        </div>
+                        <div class="scenario-stat">
+                            <div class="stat-number">50 家</div>
+                            <div class="stat-label">年度覆蓋公司數量上限</div>
+                        </div>
+                        <div class="scenario-stat">
+                            <div class="stat-number">幾乎為 0</div>
+                            <div class="stat-label">跨公司隱藏關聯發現</div>
+                        </div>
+                        <div class="scenario-stat">
+                            <div class="stat-number">高風險</div>
+                            <div class="stat-label">錯失重要投資機會</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="transformation-arrow">→</div>
+
+                <div class="scenario after-scenario">
+                    <div class="scenario-title">🚀 AI 智能分析</div>
+                    <div class="scenario-stats">
+                        <div class="scenario-stat">
+                            <div class="stat-number">15 分鐘</div>
+                            <div class="stat-label">單一公司完整分析時間</div>
+                        </div>
+                        <div class="scenario-stat">
+                            <div class="stat-number">8,000+ 家</div>
+                            <div class="stat-label">年度全市場覆蓋能力</div>
+                        </div>
+                        <div class="scenario-stat">
+                            <div class="stat-number">10,000+</div>
+                            <div class="stat-label">新發現的企業關聯</div>
+                        </div>
+                        <div class="scenario-stat">
+                            <div class="stat-number">精準識別</div>
+                            <div class="stat-label">提前發現投資機會</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="real-world-impact">
+            <div class="impact-title">
+                <span>🌟</span>
+                真實世界的影響力
+            </div>
+            <div class="impact-content">
+                這些不僅僅是數字 - 它們代表著金融分析領域的根本性變革。<br>
+                現在，投資專業人士可以在幾分鐘內獲得以前需要數週才能完成的深度洞察，<br>
+                並發現那些可能改變整個投資組合表現的隱藏關聯。
+            </div>
+            <div class="companies-using">
+                <div class="company-badge">投資銀行</div>
+                <div class="company-badge">資產管理公司</div>
+                <div class="company-badge">對沖基金</div>
+                <div class="company-badge">保險公司</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 創建背景粒子
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 18 + 's';
+            particle.style.animationDuration = (Math.random() * 8 + 15) + 's';
+            
+            // 成功主題的粒子顏色
+            const colors = [
+                'rgba(34, 197, 94, 0.4)',
+                'rgba(59, 130, 246, 0.4)',
+                'rgba(139, 92, 246, 0.4)',
+                'rgba(245, 158, 11, 0.4)'
+            ];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.getElementById('bgParticles').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 25000);
+        }
+
+        // 啟動粒子系統
+        setInterval(createParticle, 1500);
+
+        // 初始粒子
+        for (let i = 0; i < 15; i++) {
+            setTimeout(createParticle, i * 200);
+        }
+
+        // 動畫數字計數器
+        function animateNumber(element, target, duration = 3000, delay = 0) {
+            setTimeout(() => {
+                let current = 0;
+                const increment = target / (duration / 20);
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    
+                    if (target >= 1000) {
+                        element.textContent = Math.floor(current).toLocaleString() + '+';
+                    } else {
+                        element.textContent = Math.floor(current) + 'x';
+                    }
+                    
+                    if (target === 80) {
+                        element.textContent = Math.floor(current) + '%';
+                    }
+                }, 20);
+            }, delay);
+        }
+
+        // 初始化數字動畫
+        const numberElements = document.querySelectorAll('[data-target]');
+        numberElements.forEach((el, index) => {
+            const target = parseInt(el.dataset.target);
+            animateNumber(el, target, 3000, 1500 + (index * 400));
+        });
+
+        // 英雄指標卡片互動效果
+        const heroMetrics = document.querySelectorAll('.hero-metric');
+        heroMetrics.forEach(metric => {
+            metric.addEventListener('mouseenter', function() {
+                const metricType = this.classList[1];
+                let glowColor;
+                
+                switch(metricType) {
+                    case 'speed-metric': glowColor = 'rgba(34, 197, 94, 0.4)'; break;
+                    case 'efficiency-metric': glowColor = 'rgba(59, 130, 246, 0.4)'; break;
+                    case 'discovery-metric': glowColor = 'rgba(139, 92, 246, 0.4)'; break;
+                    case 'adoption-metric': glowColor = 'rgba(245, 158, 11, 0.4)'; break;
+                    default: glowColor = 'rgba(34, 197, 94, 0.4)';
+                }
+                
+                this.style.boxShadow = `0 25px 50px ${glowColor}`;
+            });
+
+            metric.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 場景卡片懸浮效果
+        const scenarios = document.querySelectorAll('.scenario');
+        scenarios.forEach(scenario => {
+            scenario.addEventListener('mouseenter', function() {
+                const isBefore = this.classList.contains('before-scenario');
+                const glowColor = isBefore ? 
+                    'rgba(239, 68, 68, 0.3)' : 
+                    'rgba(34, 197, 94, 0.3)';
+                
+                this.style.boxShadow = `0 20px 40px ${glowColor}`;
+            });
+
+            scenario.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 公司徽章動畫
+        const companyBadges = document.querySelectorAll('.company-badge');
+        companyBadges.forEach((badge, index) => {
+            setTimeout(() => {
+                badge.style.transform = 'scale(0)';
+                badge.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                
+                setTimeout(() => {
+                    badge.style.transform = 'scale(1)';
+                }, 100);
+            }, 3000 + (index * 200));
+        });
+
+        // 轉換箭頭互動
+        const transformationArrow = document.querySelector('.transformation-arrow');
+        transformationArrow.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.2) rotate(5deg)';
+            this.style.boxShadow = '0 0 50px rgba(34, 197, 94, 0.8)';
+        });
+
+        transformationArrow.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+            this.style.boxShadow = '0 0 30px rgba(34, 197, 94, 0.5)';
+        });
+
+        // 成功徽章閃爍效果
+        const successBadge = document.querySelector('.success-badge');
+        setInterval(() => {
+            successBadge.style.boxShadow = '0 0 40px rgba(34, 197, 94, 0.8)';
+            successBadge.style.borderColor = 'rgba(34, 197, 94, 0.8)';
+            
+            setTimeout(() => {
+                successBadge.style.boxShadow = '0 0 25px rgba(34, 197, 94, 0.4)';
+                successBadge.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+            }, 1000);
+        }, 3000);
+
+        // 實際影響區塊動畫
+        const realWorldImpact = document.querySelector('.real-world-impact');
+        setTimeout(() => {
+            setInterval(() => {
+                realWorldImpact.style.borderColor = 'rgba(34, 197, 94, 0.6)';
+                realWorldImpact.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%)';
+                
+                setTimeout(() => {
+                    realWorldImpact.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                    realWorldImpact.style.background = 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%)';
+                }, 2000);
+            }, 5000);
+        }, 4000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURF 系統概覽</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #22c55e, #3b82f6, #8b5cf6);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            margin-top: 40px;
+        }
+
+        .features-section {
+            flex: 1;
+            min-width: 450px;
+            opacity: 0;
+            animation: slideInLeft 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .features-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+            display: flex;
+            align-items: center;
+        }
+
+        .features-title::before {
+            content: '🎯';
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.8) 0%,
+                rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #22c55e;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: featureSlideIn 0.6s ease-out forwards;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 1.2s; }
+        .feature-item:nth-child(2) { animation-delay: 1.4s; }
+        .feature-item:nth-child(3) { animation-delay: 1.6s; }
+        .feature-item:nth-child(4) { animation-delay: 1.8s; }
+        .feature-item:nth-child(5) { animation-delay: 2.0s; }
+
+        @keyframes featureSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.2);
+            border-color: #16a34a;
+        }
+
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #22c55e, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-item:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 12px;
+            animation: featurePulse 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+        }
+
+        @keyframes featurePulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+            }
+            50% { 
+                transform: scale(1.2);
+                box-shadow: 0 0 15px rgba(34, 197, 94, 0.8);
+            }
+        }
+
+        .feature-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+            display: inline;
+        }
+
+        .highlight {
+            color: #fbbf24;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+        }
+
+        .system-figure {
+            flex: 1.5;
+            min-width: 600px;
+            opacity: 0;
+            animation: slideInRight 1s ease-out 1s forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .figure-container {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .figure-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        }
+
+        .figure-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .system-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .system-image:hover {
+            transform: scale(1.02);
+        }
+
+        .performance-badge {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            animation: badgeGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+            }
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: #22c55e;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .features-section {
+                min-width: 100%;
+            }
+
+            .system-figure {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 32px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .feature-item {
+                padding: 15px;
+            }
+
+            .feature-text {
+                font-size: 14px;
+            }
+
+            .figure-container {
+                padding: 20px;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* Particles for ambient effect */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(34, 197, 94, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-30px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <!--<div class="header">-->
+            <!--[><div class="main-title">AI 解決方案 - SURF 系統</div><]-->
+            <!--[><div class="subtitle">企業間風險關聯揭示系統</div><]-->
+        <!--</div>-->
+
+        <div class="content-wrapper">
+            <div class="features-section">
+                <div class="features-title">核心功能</div>
+                
+                <ul class="features-list">
+                    <li class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">自動讀取 <span class="highlight">10-K 財務報告</span></span>
+                    </li>
+                    
+                    <li class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">識別 <span class="highlight">"共同風險段落"</span> - 討論相似風險的文本</span>
+                    </li>
+                    
+                    <li class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">建立企業間 <span class="highlight">風險關聯評分</span> (0-1 量表)</span>
+                    </li>
+                    
+                    <li class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">構建商業關係的 <span class="highlight">網絡可視化</span></span>
+                    </li>
+                    
+                    <li class="feature-item">
+                        <span class="feature-icon"></span>
+                        <span class="feature-text">績效表現：已分析 <span class="highlight">63,190 組企業關聯</span></span>
+                    </li>
+                </ul>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-number">63,190</div>
+                        <div class="stat-label">企業關聯數</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">0.9976</div>
+                        <div class="stat-label">最高關聯評分</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99th</div>
+                        <div class="stat-label">準確度百分位</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="system-figure">
+                <div class="figure-container">
+                    <div class="figure-title">SURF 系統介面與分析</div>
+                    
+                    <img class="system-image" src="../figures/surf.jpg"></img>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+

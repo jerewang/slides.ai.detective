@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金融文件分析的規模挑戰</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ef4444, #f59e0b, #22c55e);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .challenge-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 25px;
+            padding: 8px 20px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ef4444;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 30px 25px;
+            backdrop-filter: blur(20px);
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .volume-card {
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .volume-card::before {
+            background: linear-gradient(90deg, transparent, #ef4444, transparent);
+        }
+
+        .pages-card {
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .pages-card::before {
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+        }
+
+        .time-card {
+            border-color: rgba(168, 85, 247, 0.4);
+        }
+
+        .time-card::before {
+            background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+        }
+
+        .impact-card {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .impact-card::before {
+            background: linear-gradient(90deg, transparent, #22c55e, transparent);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 32px;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .volume-card .stat-icon {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
+            animation-delay: 0s;
+        }
+
+        .pages-card .stat-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+            animation-delay: 0.5s;
+        }
+
+        .time-card .stat-icon {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+            animation-delay: 1s;
+        }
+
+        .impact-card .stat-icon {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+            animation-delay: 1.5s;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: block;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .volume-card .stat-number {
+            color: #ef4444;
+        }
+
+        .pages-card .stat-number {
+            color: #f59e0b;
+        }
+
+        .time-card .stat-number {
+            color: #8b5cf6;
+        }
+
+        .impact-card .stat-number {
+            color: #22c55e;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .stat-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .comparison-section {
+            margin-top: 60px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 1.5s forwards;
+        }
+
+        .comparison-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .comparison-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .analysis-method {
+            flex: 1;
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 2px solid;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .analysis-method:hover {
+            transform: translateY(-5px);
+        }
+
+        .traditional-method {
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .ai-method {
+            border-color: rgba(34, 197, 94, 0.4);
+        }
+
+        .method-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 36px;
+        }
+
+        .traditional-method .method-icon {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .ai-method .method-icon {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+        }
+
+        .method-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .traditional-method .method-title {
+            color: #ef4444;
+        }
+
+        .ai-method .method-title {
+            color: #22c55e;
+        }
+
+        .method-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .method-stat {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid;
+        }
+
+        .traditional-method .method-stat {
+            border-left-color: #ef4444;
+        }
+
+        .ai-method .method-stat {
+            border-left-color: #22c55e;
+        }
+
+        .stat-metric {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .traditional-method .stat-metric {
+            color: #ef4444;
+        }
+
+        .ai-method .stat-metric {
+            color: #22c55e;
+        }
+
+        .stat-detail {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .vs-indicator {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+            animation: rotate 4s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .key-insight {
+            margin-top: 50px;
+            background: linear-gradient(135deg, 
+                rgba(168, 85, 247, 0.1) 0%,
+                rgba(59, 130, 246, 0.1) 100%);
+            border-radius: 16px;
+            padding: 30px;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            opacity: 0;
+            animation: slideInUp 1s ease-out 2s forwards;
+        }
+
+        .insight-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .insight-content {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .highlight-text {
+            background: linear-gradient(135deg, 
+                rgba(245, 158, 11, 0.3) 0%,
+                rgba(245, 158, 11, 0.2) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .comparison-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .vs-indicator {
+                display: none;
+            }
+
+            .stat-card {
+                padding: 25px 20px;
+            }
+
+            .stat-number {
+                font-size: 30px;
+            }
+        }
+
+        /* 粒子效果 */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(239, 68, 68, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-30px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="main-title">金融文件分析的規模挑戰</div>
+            <div class="subtitle">當傳統分析遇上海量數據的現實困境</div>
+            <div class="challenge-badge">
+                ⚠️ 隱藏連結埋藏在數千份報告中 - 人工分析無法大規模檢測
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card volume-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number" data-target="8000">0</div>
+                <div class="stat-label">年度報告數量</div>
+                <div class="stat-description">
+                    每年有7,000-8,000份10-K報告提交至SEC，數量龐大且持續增長
+                </div>
+            </div>
+
+            <div class="stat-card pages-card">
+                <div class="stat-icon">📄</div>
+                <div class="stat-number" data-target="250">0</div>
+                <div class="stat-label">平均頁數</div>
+                <div class="stat-description">
+                    每份報告平均150-250頁，部分超過500頁，內容複雜深入
+                </div>
+            </div>
+
+            <div class="stat-card time-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-number" data-target="14">0</div>
+                <div class="stat-label">傳統分析時間 (天)</div>
+                <div class="stat-description">
+                    深度分析單一公司需要數天至數週，時間成本極高
+                </div>
+            </div>
+
+            <div class="stat-card impact-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-number">∞</div>
+                <div class="stat-label">錯失機會成本</div>
+                <div class="stat-description">
+                    錯過的投資機會和昂貴的認知盲點造成無法估量的損失
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <div class="comparison-title">傳統分析 vs AI 智能分析</div>
+            
+            <div class="comparison-container">
+                <div class="analysis-method traditional-method">
+                    <div class="method-icon">👨‍💼</div>
+                    <div class="method-title">傳統人工分析</div>
+                    
+                    <div class="method-stats">
+                        <div class="method-stat">
+                            <div class="stat-metric">單一公司：2-4週</div>
+                            <div class="stat-detail">深度閱讀與分析時間</div>
+                        </div>
+                        
+                        <div class="method-stat">
+                            <div class="stat-metric">年產能：~50家公司</div>
+                            <div class="stat-detail">一位分析師的極限覆蓋範圍</div>
+                        </div>
+                        
+                        <div class="method-stat">
+                            <div class="stat-metric">跨公司關聯：幾乎不可能</div>
+                            <div class="stat-detail">無法大規模檢測隱藏連結</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vs-indicator">VS</div>
+
+                <div class="analysis-method ai-method">
+                    <div class="method-icon">🤖</div>
+                    <div class="method-title">AI 智能分析</div>
+                    
+                    <div class="method-stats">
+                        <div class="method-stat">
+                            <div class="stat-metric">單一公司：15分鐘</div>
+                            <div class="stat-detail">自動化智能處理速度</div>
+                        </div>
+                        
+                        <div class="method-stat">
+                            <div class="stat-metric">年產能：8,000+家公司</div>
+                            <div class="stat-detail">覆蓋所有上市公司報告</div>
+                        </div>
+                        
+                        <div class="method-stat">
+                            <div class="stat-metric">跨公司關聯：即時檢測</div>
+                            <div class="stat-detail">識別隱藏風險與機會連結</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-insight">
+            <div class="insight-title">
+                <span>💡</span>
+                關鍵洞察
+            </div>
+            <div class="insight-content">
+                在金融市場中，<span class="highlight-text">時間就是金錢</span>。當人工分析師還在努力消化單一公司的財報時，市場機會已經稍縱即逝。更重要的是，那些埋藏在數千份報告中的<span class="highlight-text">隱藏風險連結</span>，往往是造成重大損失或錯失機會的根本原因。只有透過AI技術的大規模智能分析，我們才能在這個資訊爆炸的時代中保持競爭優勢。
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 創建背景粒子
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 12) + 's';
+            
+            // 隨機選擇粒子顏色
+            const colors = [
+                'rgba(239, 68, 68, 0.3)',
+                'rgba(245, 158, 11, 0.3)',
+                'rgba(139, 92, 246, 0.3)',
+                'rgba(34, 197, 94, 0.3)'
+            ];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.getElementById('bgParticles').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 18000);
+        }
+
+        // 啟動粒子系統
+        setInterval(createParticle, 2000);
+
+        // 初始粒子
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createParticle, i * 300);
+        }
+
+        // 數字動畫效果
+        function animateNumber(element, target, duration = 2000, delay = 0) {
+            setTimeout(() => {
+                let current = 0;
+                const increment = target / (duration / 16);
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(current).toLocaleString();
+                }, 16);
+            }, delay);
+        }
+
+        // 初始化數字動畫
+        const numberElements = document.querySelectorAll('[data-target]');
+        numberElements.forEach((el, index) => {
+            const target = parseInt(el.dataset.target);
+            animateNumber(el, target, 2000, 1200 + (index * 300));
+        });
+
+        // 統計卡片懸浮效果
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const cardType = this.classList[1];
+                let glowColor;
+                
+                switch(cardType) {
+                    case 'volume-card': glowColor = 'rgba(239, 68, 68, 0.3)'; break;
+                    case 'pages-card': glowColor = 'rgba(245, 158, 11, 0.3)'; break;
+                    case 'time-card': glowColor = 'rgba(139, 92, 246, 0.3)'; break;
+                    case 'impact-card': glowColor = 'rgba(34, 197, 94, 0.3)'; break;
+                    default: glowColor = 'rgba(59, 130, 246, 0.3)';
+                }
+                
+                this.style.boxShadow = `0 20px 40px ${glowColor}`;
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 分析方法比較動畫
+        const analysisMethod = document.querySelectorAll('.analysis-method');
+        analysisMethod.forEach(method => {
+            method.addEventListener('mouseenter', function() {
+                const isTraditional = this.classList.contains('traditional-method');
+                const glowColor = isTraditional ? 
+                    'rgba(239, 68, 68, 0.2)' : 
+                    'rgba(34, 197, 94, 0.2)';
+                
+                this.style.boxShadow = `0 15px 40px ${glowColor}`;
+            });
+
+            method.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 洞察卡片閃爍效果
+        const keyInsight = document.querySelector('.key-insight');
+        setTimeout(() => {
+            setInterval(() => {
+                keyInsight.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+                keyInsight.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.3)';
+                
+                setTimeout(() => {
+                    keyInsight.style.borderColor = 'rgba(168, 85, 247, 0.3)';
+                    keyInsight.style.boxShadow = 'none';
+                }, 1000);
+            }, 3000);
+        }, 3000);
+
+        // 高亮文字動畫
+        const highlightTexts = document.querySelectorAll('.highlight-text');
+        highlightTexts.forEach((text, index) => {
+            setTimeout(() => {
+                setInterval(() => {
+                    text.style.boxShadow = '0 0 15px rgba(245, 158, 11, 0.6)';
+                    text.style.textShadow = '0 0 10px rgba(251, 191, 36, 0.8)';
+                    
+                    setTimeout(() => {
+                        text.style.boxShadow = '0 0 8px rgba(245, 158, 11, 0.3)';
+                        text.style.textShadow = 'none';
+                    }, 800);
+                }, 4000);
+            }, 4000 + (index * 1000));
+        });
+    </script>
+</body>
+</html>

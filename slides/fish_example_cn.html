@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FISH - 自動化文件分析系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #22c55e, #3b82f6, #8b5cf6);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .efficiency-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 25px;
+            padding: 8px 20px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #22c55e;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            }
+        }
+
+        .comparison-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 50px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .document-panel {
+            flex: 1;
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 0;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .document-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .document-header {
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.2) 0%,
+                rgba(59, 130, 246, 0.1) 100%);
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+            padding: 20px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .year-badge {
+            font-size: 24px;
+            font-weight: 800;
+            color: #3b82f6;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .doc-type {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(59, 130, 246, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .document-content {
+            padding: 25px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .report-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+        }
+
+        .report-text {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid rgba(59, 130, 246, 0.3);
+            position: relative;
+        }
+
+        /* 2015 - 正面標示 */
+        .highlight-positive {
+            background: linear-gradient(135deg, 
+                rgba(34, 197, 94, 0.3) 0%,
+                rgba(34, 197, 94, 0.2) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+            animation: highlightPulse 2s ease-in-out infinite;
+        }
+
+        /* 2016 - 負面標示 */
+        .highlight-negative {
+            background: linear-gradient(135deg, 
+                rgba(239, 68, 68, 0.3) 0%,
+                rgba(239, 68, 68, 0.2) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+            animation: highlightPulseRed 2s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+            }
+        }
+
+        @keyframes highlightPulseRed {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+            }
+        }
+
+        .ai-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            animation: aiGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes aiGlow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.7);
+            }
+        }
+
+        .analysis-summary {
+            margin-top: 40px;
+            background: linear-gradient(135deg, 
+                rgba(168, 85, 247, 0.1) 0%,
+                rgba(59, 130, 246, 0.1) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            opacity: 0;
+            animation: slideInUp 1s ease-out 1.5s forwards;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .key-findings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .finding-item {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid;
+        }
+
+        .finding-positive {
+            border-left-color: #22c55e;
+        }
+
+        .finding-negative {
+            border-left-color: #ef4444;
+        }
+
+        .finding-efficiency {
+            border-left-color: #8b5cf6;
+        }
+
+        .finding-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .finding-positive .finding-title {
+            color: #22c55e;
+        }
+
+        .finding-negative .finding-title {
+            color: #ef4444;
+        }
+
+        .finding-efficiency .finding-title {
+            color: #8b5cf6;
+        }
+
+        .finding-description {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .time-comparison {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .time-metric {
+            text-align: center;
+        }
+
+        .time-value {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .time-old {
+            color: #ef4444;
+        }
+
+        .time-new {
+            color: #22c55e;
+        }
+
+        .time-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .arrow {
+            font-size: 24px;
+            color: #22c55e;
+            animation: arrowBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .comparison-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .document-header {
+                padding: 15px 20px;
+            }
+
+            .document-content {
+                padding: 20px;
+            }
+
+            .time-comparison {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        /* 粒子效果 */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-30px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <!--<div class="main-title">FISH 自動化文件分析系統</div>-->
+            <!--<div class="subtitle">智能風險檢測與變化追蹤</div>-->
+            <div class="efficiency-badge">
+                ⚡ 時間節省：4小時 → 15分鐘每份報告
+            </div>
+        </div>
+
+        <div class="comparison-container">
+            <div class="document-panel">
+                <div class="document-header">
+                    <div class="year-badge">2015年</div>
+                    <div class="doc-type">10-K報告</div>
+                </div>
+                <div class="document-content">
+                    <div class="ai-indicator">AI 檢測</div>
+                    <div class="report-section">
+                        <div class="section-title">管理層內控評估</div>
+                        <div class="report-text">
+                            Based on our evaluation under the framework in Internal Control—Integrated Framework issued by the Committee of Sponsoring Organizations of the Treadway Commission (COSO), our management concluded that our <span class="highlight-positive">internal control over financial reporting was effective</span> as of December 31, 2015.
+                        </div>
+                    </div>
+                    <div class="report-section">
+                        <div class="section-title">審計師意見</div>
+                        <div class="report-text">
+                            In our opinion, the Company maintained, in all material respects, <span class="highlight-positive">effective internal control</span> over financial reporting as of December 31, 2015, based on criteria established in Internal Control—Integrated Framework issued by COSO.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="document-panel">
+                <div class="document-header">
+                    <div class="year-badge">2016年</div>
+                    <div class="doc-type">10-K報告</div>
+                </div>
+                <div class="document-content">
+                    <div class="ai-indicator">AI 檢測</div>
+                    <div class="report-section">
+                        <div class="section-title">管理層內控評估</div>
+                        <div class="report-text">
+                            Based on our evaluation under the framework in Internal Control—Integrated Framework issued by the Committee of Sponsoring Organizations of the Treadway Commission (COSO), our management concluded that our <span class="highlight-negative">internal control over financial reporting was not effective</span> as of December 31, 2016, due to <span class="highlight-negative">material weakness</span> in our internal control over financial reporting.
+                        </div>
+                    </div>
+                    <div class="report-section">
+                        <div class="section-title">重大缺陷描述</div>
+                        <div class="report-text">
+                            The Company did not maintain effective controls over the completeness and accuracy of certain manual journal entries. This <span class="highlight-negative">material weakness</span> resulted in material misstatements to multiple financial statement line items.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-summary">
+            <div class="summary-title">
+                <span>🤖</span>
+                FISH AI 分析摘要
+            </div>
+            
+            <div class="key-findings">
+                <div class="finding-item finding-positive">
+                    <div class="finding-title">2015年狀態：內控有效</div>
+                    <div class="finding-description">
+                        管理層和審計師確認財務報告內控體系運行有效
+                    </div>
+                </div>
+                
+                <div class="finding-item finding-negative">
+                    <div class="finding-title">2016年狀態：重大缺陷</div>
+                    <div class="finding-description">
+                        檢測到嚴重惡化 - 由於重大缺陷導致內控失效
+                    </div>
+                </div>
+                
+                <div class="finding-item finding-efficiency">
+                    <div class="finding-title">風險信號強度：高</div>
+                    <div class="finding-description">
+                        關鍵控制失效，需要投資者立即關注和分析
+                    </div>
+                </div>
+            </div>
+
+            <div class="time-comparison">
+                <div class="time-metric">
+                    <div class="time-value time-old">4小時</div>
+                    <div class="time-label">人工分析</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="time-metric">
+                    <div class="time-value time-new">15分鐘</div>
+                    <div class="time-label">FISH AI分析</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 創建背景粒子
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 12) + 's';
+            
+            document.getElementById('bgParticles').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 18000);
+        }
+
+        // 啟動粒子系統
+        setInterval(createParticle, 2000);
+
+        // 初始粒子
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createParticle, i * 400);
+        }
+
+        // 文件面板增強懸浮效果
+        const panels = document.querySelectorAll('.document-panel');
+        panels.forEach(panel => {
+            panel.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'rgba(59, 130, 246, 0.4)';
+                this.style.boxShadow = '0 20px 40px rgba(59, 130, 246, 0.2)';
+            });
+
+            panel.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 標示動畫觸發
+        setTimeout(() => {
+            const highlights = document.querySelectorAll('.highlight-positive, .highlight-negative');
+            highlights.forEach((highlight, index) => {
+                setTimeout(() => {
+                    highlight.style.animation = highlight.style.animation + ', highlightFlash 1s ease-in-out';
+                }, index * 200);
+            });
+        }, 2000);
+
+        // 添加閃爍動畫
+        const flashStyle = document.createElement('style');
+        flashStyle.textContent = `
+            @keyframes highlightFlash {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(flashStyle);
+
+        // 模擬AI處理效果
+        const aiIndicators = document.querySelectorAll('.ai-indicator');
+        aiIndicators.forEach((indicator, index) => {
+            setTimeout(() => {
+                indicator.style.animation = 'aiProcessing 2s ease-in-out';
+            }, 1000 + (index * 500));
+        });
+
+        // 添加AI處理動畫
+        const aiStyle = document.createElement('style');
+        aiStyle.textContent = `
+            @keyframes aiProcessing {
+                0% { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+                50% { background: linear-gradient(135deg, #22c55e, #16a34a); }
+                100% { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+            }
+        `;
+        document.head.appendChild(aiStyle);
+    </script>
+</body>
+</html>

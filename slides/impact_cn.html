@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 平行影響分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ef4444, #f59e0b, #22c55e);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .ai-insight {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 25px;
+            padding: 8px 20px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #8b5cf6;
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes aiPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+            }
+        }
+
+        .timeline-container {
+            margin-top: 50px;
+            position: relative;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .timeline-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .period-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(59, 130, 246, 0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .timeline-axis {
+            position: relative;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                rgba(239, 68, 68, 0.8) 0%,
+                rgba(245, 158, 11, 0.8) 25%,
+                rgba(34, 197, 94, 0.8) 75%,
+                rgba(59, 130, 246, 0.8) 100%);
+            border-radius: 2px;
+            margin: 40px 0;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            animation: timelineGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes timelineGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        .time-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 0 20px;
+        }
+
+        .time-marker {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+
+        .companies-timeline {
+            display: flex;
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .company-track {
+            flex: 1;
+            position: relative;
+        }
+
+        .company-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .nvidia-logo {
+            background: linear-gradient(135deg, 
+                rgba(118, 185, 0, 0.9) 0%, 
+                rgba(90, 146, 22, 0.95) 100%);
+            box-shadow: 0 0 25px rgba(118, 185, 0, 0.3);
+        }
+
+        .wabtec-logo {
+            background: linear-gradient(135deg, 
+                rgba(30, 58, 138, 0.9) 0%, 
+                rgba(59, 130, 246, 0.95) 100%);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .company-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .impact-events {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .impact-event {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: eventSlideIn 0.8s ease-out forwards;
+        }
+
+        .impact-event.early {
+            border-color: rgba(239, 68, 68, 0.4);
+            animation-delay: 1.2s;
+        }
+
+        .impact-event.peak {
+            border-color: rgba(245, 158, 11, 0.4);
+            animation-delay: 1.6s;
+        }
+
+        .impact-event.recovery {
+            border-color: rgba(34, 197, 94, 0.4);
+            animation-delay: 2.0s;
+        }
+
+        .wabtec-track .impact-event {
+            transform: translateX(30px);
+        }
+
+        @keyframes eventSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .wabtec-track .impact-event {
+            animation-name: eventSlideInRight;
+        }
+
+        @keyframes eventSlideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .event-date {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .early .event-date {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .peak .event-date {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .recovery .event-date {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .event-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .event-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .risk-keyword {
+            background: linear-gradient(135deg, 
+                rgba(245, 158, 11, 0.3) 0%,
+                rgba(245, 158, 11, 0.2) 100%);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .ai-analysis {
+            margin-top: 50px;
+            background: linear-gradient(135deg, 
+                rgba(168, 85, 247, 0.1) 0%,
+                rgba(59, 130, 246, 0.1) 100%);
+            border-radius: 16px;
+            padding: 30px;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            opacity: 0;
+            animation: slideInUp 1s ease-out 2.5s forwards;
+        }
+
+        .analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .analysis-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #8b5cf6;
+            text-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .risk-percentile {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            animation: percentilePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes percentilePulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(239, 68, 68, 0.7);
+            }
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .comparison-item {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid;
+        }
+
+        .ai-prediction {
+            border-left-color: #22c55e;
+        }
+
+        .human-analysis {
+            border-left-color: #ef4444;
+        }
+
+        .comparison-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-prediction .comparison-title {
+            color: #22c55e;
+        }
+
+        .human-analysis .comparison-title {
+            color: #ef4444;
+        }
+
+        .comparison-content {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .connection-insight {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 12px;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .insight-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #22c55e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-content {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .companies-timeline {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .timeline-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 粒子效果 */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(239, 68, 68, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-30px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="main-title">COVID-19 平行影響分析</div>
+            <div class="subtitle">半導體短缺如何同時衝擊 GPU 與鐵路產業</div>
+            <div class="ai-insight">
+                🧠 AI檢測到95百分位數風險關聯 - 人工分析師未發現
+            </div>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <div class="timeline-title">疫情影響時間軸</div>
+                <div class="period-label">2020年3月 - 2022年12月</div>
+            </div>
+
+            <div class="timeline-axis"></div>
+            
+            <div class="time-markers">
+                <div class="time-marker">2020年3月<br>疫情爆發</div>
+                <div class="time-marker">2021年6月<br>短缺高峰</div>
+                <div class="time-marker">2022年6月<br>逐步恢復</div>
+                <div class="time-marker">2022年12月<br>市場穩定</div>
+            </div>
+        </div>
+
+        <div class="companies-timeline">
+            <div class="company-track nvidia-track">
+                <div class="company-header">
+                    <div class="company-logo nvidia-logo">NVIDIA</div>
+                    <div class="company-name">Nvidia (NVDA)</div>
+                </div>
+
+                <div class="impact-events">
+                    <div class="impact-event early">
+                        <div class="event-date">2020年4月</div>
+                        <div class="event-title">初期供應警訊</div>
+                        <div class="event-description">
+                            COVID-19 導致亞洲晶圓廠產能下降，<span class="risk-keyword">GPU供應鏈</span>開始出現緊張局面，但市場尚未充分意識到問題嚴重性。
+                        </div>
+                    </div>
+
+                    <div class="impact-event peak">
+                        <div class="event-date">2021年7月</div>
+                        <div class="event-title">GPU價格暴漲</div>
+                        <div class="event-description">
+                            <span class="risk-keyword">半導體短缺</span>達到高峰，GPU價格波動劇烈，消費級顯卡價格較建議零售價上漲200-300%。
+                        </div>
+                    </div>
+
+                    <div class="impact-event recovery">
+                        <div class="event-date">2022年8月</div>
+                        <div class="event-title">供應鏈修復</div>
+                        <div class="event-description">
+                            隨著台積電等代工廠產能恢復，GPU供應逐漸改善，但<span class="risk-keyword">價格波動</span>影響仍持續數月。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="company-track wabtec-track">
+                <div class="company-header">
+                    <div class="company-logo wabtec-logo">WABTEC</div>
+                    <div class="company-name">Wabtec (WAB)</div>
+                </div>
+
+                <div class="impact-events">
+                    <div class="impact-event early">
+                        <div class="event-date">2020年5月</div>
+                        <div class="event-title">鐵路元件短缺</div>
+                        <div class="event-description">
+                            疫情影響導致<span class="risk-keyword">鐵路控制系統</span>所需的半導體元件供應中斷，機車製造進度開始延遲。
+                        </div>
+                    </div>
+
+                    <div class="impact-event peak">
+                        <div class="event-date">2021年8月</div>
+                        <div class="event-title">製造延遲危機</div>
+                        <div class="event-description">
+                            <span class="risk-keyword">半導體短缺</span>嚴重影響鐵路設備生產，多個大型訂單被迫延期，營運成本大幅上升。
+                        </div>
+                    </div>
+
+                    <div class="impact-event recovery">
+                        <div class="event-date">2022年9月</div>
+                        <div class="event-title">供應鏈重建</div>
+                        <div class="event-description">
+                            通過供應鏈多元化策略，逐步解決<span class="risk-keyword">元件短缺</span>問題，但完全恢復仍需時間。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-analysis">
+            <div class="analysis-header">
+                <div class="analysis-title">
+                    <span>🤖</span>
+                    AI vs 人工分析對比
+                </div>
+                <div class="risk-percentile">95th 百分位數風險關聯</div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-item ai-prediction">
+                    <div class="comparison-title">
+                        <span>✅</span>
+                        AI 預測分析
+                    </div>
+                    <div class="comparison-content">
+                        <strong>2020年4月提前預警：</strong><br>
+                        系統檢測到兩家公司在相同時期使用相似的供應鏈風險描述語言，並預測半導體短缺將對看似無關的GPU和鐵路產業產生平行影響。
+                    </div>
+                </div>
+
+                <div class="comparison-item human-analysis">
+                    <div class="comparison-title">
+                        <span>❌</span>
+                        人工分析師
+                    </div>
+                    <div class="comparison-content">
+                        <strong>直到2021年中才發現：</strong><br>
+                        傳統分析師將Nvidia視為科技股，Wabtec視為工業股，未能識別出兩者間的半導體依賴關聯，錯過了重要的系統性風險信號。
+                    </div>
+                </div>
+            </div>
+
+            <div class="connection-insight">
+                <div class="insight-title">
+                    <span>💡</span>
+                    關鍵洞察
+                </div>
+                <div class="insight-content">
+                    AI系統通過語言模式分析發現，儘管Nvidia和Wabtec屬於不同產業，但它們在2020年報告中都使用了"supply chain disruptions"和"semiconductor shortages"等相似術語，預示著相同的根本風險因子。這種跨產業的隱藏關聯性，正是傳統分析方法容易忽視的盲點。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 創建背景粒子
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 12) + 's';
+            
+            // 隨機選擇粒子顏色
+            const colors = [
+                'rgba(239, 68, 68, 0.3)',
+                'rgba(245, 158, 11, 0.3)',
+                'rgba(34, 197, 94, 0.3)',
+                'rgba(59, 130, 246, 0.3)'
+            ];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.getElementById('bgParticles').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 18000);
+        }
+
+        // 啟動粒子系統
+        setInterval(createParticle, 2000);
+
+        // 初始粒子
+        for (let i = 0; i < 10; i++) {
+            setTimeout(createParticle, i * 300);
+        }
+
+        // 事件卡片懸浮效果
+        const impactEvents = document.querySelectorAll('.impact-event');
+        impactEvents.forEach(event => {
+            event.addEventListener('mouseenter', function() {
+                const eventType = this.classList[1]; // early, peak, or recovery
+                let glowColor;
+                
+                switch(eventType) {
+                    case 'early': glowColor = 'rgba(239, 68, 68, 0.3)'; break;
+                    case 'peak': glowColor = 'rgba(245, 158, 11, 0.3)'; break;
+                    case 'recovery': glowColor = 'rgba(34, 197, 94, 0.3)'; break;
+                    default: glowColor = 'rgba(59, 130, 246, 0.3)';
+                }
+                
+                this.style.boxShadow = `0 15px 40px ${glowColor}`;
+                this.style.transform = 'translateY(-3px) scale(1.02)';
+                
+                // 增強風險關鍵詞效果
+                const keywords = this.querySelectorAll('.risk-keyword');
+                keywords.forEach(keyword => {
+                    keyword.style.boxShadow = '0 0 12px rgba(245, 158, 11, 0.5)';
+                    keyword.style.textShadow = '0 0 10px rgba(251, 191, 36, 0.7)';
+                });
+            });
+
+            event.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+                this.style.transform = 'translateY(0) scale(1)';
+                
+                // 恢復風險關鍵詞效果
+                const keywords = this.querySelectorAll('.risk-keyword');
+                keywords.forEach(keyword => {
+                    keyword.style.boxShadow = '0 0 8px rgba(245, 158, 11, 0.3)';
+                    keyword.style.textShadow = 'none';
+                });
+            });
+        });
+
+        // 時間軸互動效果
+        const timelineAxis = document.querySelector('.timeline-axis');
+        timelineAxis.addEventListener('mouseenter', function() {
+            this.style.boxShadow = '0 0 35px rgba(59, 130, 246, 0.6)';
+            this.style.transform = 'scaleY(1.5)';
+        });
+
+        timelineAxis.addEventListener('mouseleave', function() {
+            this.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.3)';
+            this.style.transform = 'scaleY(1)';
+        });
+
+        // 比較項目動畫
+        const comparisonItems = document.querySelectorAll('.comparison-item');
+        comparisonItems.forEach((item, index) => {
+            setTimeout(() => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'all 0.6s ease-out';
+                
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 100);
+            }, 3000 + (index * 300));
+        });
+
+        // 風險百分位數動態更新效果
+        const percentile = document.querySelector('.risk-percentile');
+        let currentValue = 0;
+        const targetValue = 95;
+        
+        setTimeout(() => {
+            const interval = setInterval(() => {
+                currentValue += 2;
+                percentile.textContent = `${currentValue}th 百分位數風險關聯`;
+                
+                if (currentValue >= targetValue) {
+                    clearInterval(interval);
+                    percentile.textContent = `${targetValue}th 百分位數風險關聯`;
+                }
+            }, 50);
+        }, 3000);
+    </script>
+</body>
+</html>

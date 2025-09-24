@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI前後生產力對比儀表板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(34, 197, 94, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34, 197, 94, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridShift 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridShift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInDown 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ef4444, #f59e0b, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 80px 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+            align-items: start;
+        }
+
+        .comparison-side {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%, 
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 25px;
+            padding: 35px;
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--side-color);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                0 0 25px var(--side-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            animation: sideSlideIn 1s ease-out forwards;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .before-side {
+            --side-color: rgba(239, 68, 68, 0.4);
+            --side-glow: rgba(239, 68, 68, 0.3);
+            animation-delay: 0.6s;
+        }
+
+        .after-side {
+            --side-color: rgba(34, 197, 94, 0.4);
+            --side-glow: rgba(34, 197, 94, 0.3);
+            animation-delay: 0.9s;
+        }
+
+        @keyframes sideSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .comparison-side:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 40px var(--side-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .side-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .side-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .before-side .side-title {
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .after-side .side-title {
+            color: #22c55e;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .side-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        .metrics-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .metric-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: metricSlideIn 0.8s ease-out forwards;
+        }
+
+        .metric-item:nth-child(1) { animation-delay: 1.2s; }
+        .metric-item:nth-child(2) { animation-delay: 1.4s; }
+        .metric-item:nth-child(3) { animation-delay: 1.6s; }
+        .metric-item:nth-child(4) { animation-delay: 1.8s; }
+
+        @keyframes metricSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .after-side .metric-item:nth-child(1) { animation-delay: 1.3s; }
+        .after-side .metric-item:nth-child(2) { animation-delay: 1.5s; }
+        .after-side .metric-item:nth-child(3) { animation-delay: 1.7s; }
+        .after-side .metric-item:nth-child(4) { animation-delay: 1.9s; }
+
+        .after-side .metric-item {
+            animation-name: metricSlideInRight;
+        }
+
+        @keyframes metricSlideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .metric-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .metric-icon {
+            font-size: 28px;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        .metric-header:nth-child(1) .metric-icon { animation-delay: 0s; }
+        .metric-header:nth-child(2) .metric-icon { animation-delay: 0.7s; }
+        .metric-header:nth-child(3) .metric-icon { animation-delay: 1.4s; }
+        .metric-header:nth-child(4) .metric-icon { animation-delay: 2.1s; }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 800;
+            margin-left: 5px;
+        }
+
+        .before-side .metric-value {
+            color: #ef4444;
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .after-side .metric-value {
+            color: #22c55e;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .metric-description {
+            font-size: 15px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+        }
+
+        /* Central transformation indicator */
+        .transformation-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            opacity: 0;
+            animation: indicatorAppear 1s ease-out 1.5s forwards;
+        }
+
+        @keyframes indicatorAppear {
+            from {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .transformation-arrow {
+            font-size: 48px;
+            color: #fbbf24;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            animation: arrowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.2);
+                filter: brightness(1.3);
+            }
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, 
+                rgba(59, 130, 246, 0.3) 0%, 
+                rgba(168, 85, 247, 0.4) 100%);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            border: 2px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 
+                0 0 20px rgba(59, 130, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            animation: badgeGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes badgeGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 20px rgba(59, 130, 246, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    0 0 30px rgba(59, 130, 246, 0.5),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        /* Summary section */
+        .summary-section {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.8) 0%, 
+                rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 25px;
+            padding: 40px;
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.2);
+            text-align: center;
+            opacity: 0;
+            animation: summaryAppear 1s ease-out 2.5s forwards;
+        }
+
+        @keyframes summaryAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #22c55e;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .summary-stat {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .summary-stat:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: #22c55e;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-description {
+            font-size: 18px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Floating elements */
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            animation: elementFloat 8s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            top: 15%;
+            left: 8%;
+            font-size: 20px;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            top: 30%;
+            right: 12%;
+            font-size: 18px;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            bottom: 25%;
+            left: 15%;
+            font-size: 22px;
+            animation-delay: 4s;
+        }
+
+        @keyframes elementFloat {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(10px, -15px) rotate(5deg);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-5px, -25px) rotate(-3deg);
+                opacity: 0.8;
+            }
+            75% {
+                transform: translate(-10px, -10px) rotate(8deg);
+                opacity: 0.5;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .transformation-indicator {
+                order: -1;
+                height: auto;
+                padding: 20px 0;
+            }
+
+            .transformation-arrow {
+                transform: rotate(90deg);
+                font-size: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 32px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .comparison-side {
+                padding: 25px;
+            }
+
+            .side-title {
+                font-size: 24px;
+            }
+
+            .metric-value {
+                font-size: 28px;
+            }
+
+            .summary-section {
+                padding: 30px;
+            }
+
+            .summary-title {
+                font-size: 28px;
+            }
+
+            .summary-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <!-- Floating elements -->
+    <div class="floating-element">📊</div>
+    <div class="floating-element">⚡</div>
+    <div class="floating-element">🎯</div>
+
+    <div class="container">
+        <div class="header">
+            <div class="main-title">AI 前後生產力對比儀表板</div>
+            <div class="subtitle">從疲憊超載到高效創新的職場轉型</div>
+            <div class="description">
+                真實數據展現 AI 如何革命性地改善金融分析師的工作體驗與生產力表現
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <!-- Before AI Side -->
+            <div class="comparison-side before-side">
+                <div class="side-header">
+                    <div class="side-title">AI 導入前</div>
+                    <div class="side-subtitle">傳統工作模式的挑戰</div>
+                </div>
+                
+                <div class="metrics-list">
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">😰</div>
+                            <div class="metric-value">12</div>
+                            <span style="color: rgba(255,255,255,0.8); font-size: 18px; font-weight: 600;">小時</span>
+                        </div>
+                        <div class="metric-description">
+                            每日工作時數：閱讀報告、整理數據，長時間高強度工作導致身心疲憊
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">📉</div>
+                            <div class="metric-value">60</div>
+                            <span style="color: rgba(255,255,255,0.8); font-size: 18px; font-weight: 600;">%</span>
+                        </div>
+                        <div class="metric-description">
+                            風險評估準確率：人工分析限制導致的準確度瓶頸，影響決策品質
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">🔍</div>
+                            <div class="metric-value">遺漏</div>
+                        </div>
+                        <div class="metric-description">
+                            關鍵企業關聯：人力無法處理海量資訊，重要風險連結經常被忽略
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">🌊</div>
+                            <div class="metric-value">壓力</div>
+                        </div>
+                        <div class="metric-description">
+                            資訊超載壓力：持續的高壓工作環境，影響創意思考和工作滿意度
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transformation Indicator -->
+            <div class="transformation-indicator">
+                <div class="transformation-arrow">➜</div>
+                <div class="ai-badge">AI 賦能</div>
+            </div>
+
+            <!-- After AI Side -->
+            <div class="comparison-side after-side">
+                <div class="side-header">
+                    <div class="side-title">AI 導入後</div>
+                    <div class="side-subtitle">智能化工作新體驗</div>
+                </div>
+                
+                <div class="metrics-list">
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-value">6</div>
+                            <span style="color: rgba(255,255,255,0.8); font-size: 18px; font-weight: 600;">小時</span>
+                        </div>
+                        <div class="metric-description">
+                            專注策略工作時數：自動化處理繁重任務，專注於高價值戰略思考
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">📈</div>
+                            <div class="metric-value">85</div>
+                            <span style="color: rgba(255,255,255,0.8); font-size: 18px; font-weight: 600;">%</span>
+                        </div>
+                        <div class="metric-description">
+                            分析準確率提升：AI 輔助分析大幅提高準確度，增強決策信心
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">🔗</div>
+                            <div class="metric-value">自動</div>
+                        </div>
+                        <div class="metric-description">
+                            隱藏關係發現：AI 自動識別複雜關聯，揭示人力難以發現的風險模式
+                        </div>
+                    </div>
+
+                    <div class="metric-item">
+                        <div class="metric-header">
+                            <div class="metric-icon">💡</div>
+                            <div class="metric-value">創新</div>
+                        </div>
+                        <div class="metric-description">
+                            創意金融思維：釋放時間進行創新思考，開發新的分析方法和策略
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-title">轉型成果總覽</div>
+            <div class="summary-description">
+                AI 技術的導入不僅提升了工作效率，更重要的是改善了金融分析師的工作品質和生活平衡。
+                從繁重的數據處理工作中解放，專注於策略思考和創新分析，實現真正的專業價值提升。
+            </div>
+            
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="stat-number">50%</div>
+                    <div class="stat-label">工作時數減少</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="stat-number">25%</div>
+                    <div class="stat-label">準確率提升</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">關聯發現率</div>
+                </div>
+                <div class="summary-stat">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">創意潛力釋放</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive hover effects
+        const metricItems = document.querySelectorAll('.metric-item');
+        const comparisonSides = document.querySelectorAll('.comparison-side');
+        
+        metricItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                // Enhanced hover effect
+                this.style.transform = 'translateY(-5px) scale(1.03)';
+                this.style.background = 'rgba(255, 255, 255, 0.15)';
+                
+                // Add glow effect to metric value
+                const metricValue = this.querySelector('.metric-value');
+                if (metricValue) {
+                    metricValue.style.filter = 'brightness(1.3)';
+                    metricValue.style.transform = 'scale(1.1)';
+                    metricValue.style.transition = 'all 0.3s ease';
+                }
+                
+                // Create sparkle effect
+                const sparkle = document.createElement('div');
+                sparkle.innerHTML = '✨';
+                sparkle.style.position = 'absolute';
+                sparkle.style.top = '10px';
+                sparkle.style.right = '15px';
+                sparkle.style.fontSize = '18px';
+                sparkle.style.animation = 'sparkleRotate 1s ease-in-out';
+                sparkle.style.pointerEvents = 'none';
+                
+                this.style.position = 'relative';
+                this.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    if (sparkle.parentNode) {
+                        sparkle.parentNode.removeChild(sparkle);
+                    }
+                }, 1000);
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.background = '';
+                
+                const metricValue = this.querySelector('.metric-value');
+                if (metricValue) {
+                    metricValue.style.filter = '';
+                    metricValue.style.transform = '';
+                }
+            });
+        });
+
+        // Add sparkle animation
+        const sparkleStyle = document.createElement('style');
+        sparkleStyle.textContent = `
+            @keyframes sparkleRotate {
+                0% {
+                    transform: rotate(0deg) scale(0);
+                    opacity: 0;
+                }
+                50% {
+                    transform: rotate(180deg) scale(1.2);
+                    opacity: 1;
+                }
+                100% {
+                    transform: rotate(360deg) scale(0);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(sparkleStyle);
+
+        // Add scroll-triggered animations
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.2,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // Observe animated elements
+        document.querySelectorAll('.comparison-side, .summary-section, .metric-item').forEach(el => {
+            scrollObserver.observe(el);
+        });
+
+        // Add comparison highlighting effect
+        function highlightComparison() {
+            const beforeSide = document.querySelector('.before-side');
+            const afterSide = document.querySelector('.after-side');
+            
+            // Highlight before side (problems)
+            beforeSide.style.transform = 'translateY(-10px) scale(1.02)';
+            beforeSide.style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                beforeSide.style.transform = '';
+                
+                // Then highlight after side (solutions)
+                setTimeout(() => {
+                    afterSide.style.transform = 'translateY(-10px) scale(1.02)';
+                    afterSide.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        afterSide.style.transform = '';
+                    }, 500);
+                }, 300);
+            }, 500);
+        }
+
+        // Trigger comparison highlighting periodically
+        setInterval(highlightComparison, 6000);
+
+        // Add counter animation for summary stats
+        function animateCounter(element, target, suffix = '') {
+            if (target === '∞') {
+                element.textContent = '∞';
+                return;
+            }
+            
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + suffix;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + suffix;
+                }
+            }, 30);
+        }
+
+        // Observe summary stats for counter animation
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumber = entry.target.querySelector('.stat-number');
+                    const text = statNumber.textContent;
+                    
+                    if (text.includes('%')) {
+                        const number = parseInt(text);
+                        statNumber.textContent = '0%';
+                        animateCounter(statNumber, number, '%');
+                    } else if (text === '∞') {
+                        // Special handling for infinity
+                        statNumber.style.animation = 'infinityPulse 2s ease-in-out infinite';
+                    }
+                    
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        // Observe summary stats
+        document.querySelectorAll('.summary-stat').forEach(stat => {
+            statsObserver.observe(stat);
+        });
+
+        // Add infinity pulse animation
+        const infinityStyle = document.createElement('style');
+        infinityStyle.textContent = `
+            @keyframes infinityPulse {
+                0%, 100% {
+                    transform: scale(1);
+                    color: #22c55e;
+                }
+                50% {
+                    transform: scale(1.2);
+                    color: #34d399;
+                }
+            }
+        `;
+        document.head.appendChild(infinityStyle);
+
+        // Add transformation indicator interaction
+        const transformationIndicator = document.querySelector('.transformation-indicator');
+        transformationIndicator.addEventListener('click', function() {
+            // Trigger dramatic transformation effect
+            const beforeSide = document.querySelector('.before-side');
+            const afterSide = document.querySelector('.after-side');
+            
+            beforeSide.style.transform = 'translateX(-100px) scale(0.9)';
+            beforeSide.style.opacity = '0.5';
+            beforeSide.style.transition = 'all 1s ease';
+            
+            afterSide.style.transform = 'translateX(100px) scale(1.1)';
+            afterSide.style.transition = 'all 1s ease';
+            
+            setTimeout(() => {
+                beforeSide.style.transform = '';
+                beforeSide.style.opacity = '';
+                afterSide.style.transform = '';
+            }, 1000);
+        });
+
+        // Add dynamic progress indicators
+        function addProgressIndicators() {
+            const metricItems = document.querySelectorAll('.after-side .metric-item');
+            metricItems.forEach((item, index) => {
+                const progressBar = document.createElement('div');
+                progressBar.style.width = '100%';
+                progressBar.style.height = '3px';
+                progressBar.style.background = 'rgba(34, 197, 94, 0.3)';
+                progressBar.style.borderRadius = '2px';
+                progressBar.style.marginTop = '10px';
+                progressBar.style.overflow = 'hidden';
+                
+                const progressFill = document.createElement('div');
+                progressFill.style.height = '100%';
+                progressFill.style.background = 'linear-gradient(90deg, #22c55e, #34d399)';
+                progressFill.style.width = '0';
+                progressFill.style.borderRadius = '2px';
+                progressFill.style.animation = `progressFill 2s ease-out ${index * 0.2 + 3}s forwards`;
+                
+                const progressWidths = ['95%', '85%', '100%', '90%'];
+                progressFill.style.setProperty('--target-width', progressWidths[index] || '80%');
+                
+                progressBar.appendChild(progressFill);
+                item.appendChild(progressBar);
+            });
+        }
+
+        // Add progress animation CSS
+        const progressStyle = document.createElement('style');
+        progressStyle.textContent = `
+            @keyframes progressFill {
+                from { width: 0; }
+                to { width: var(--target-width); }
+            }
+        `;
+        document.head.appendChild(progressStyle);
+
+        // Initialize progress indicators after page load
+        setTimeout(addProgressIndicators, 1000);
+    </script>
+</body>
+</html>

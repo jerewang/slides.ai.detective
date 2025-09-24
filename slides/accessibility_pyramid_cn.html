@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金融分析可及性轉型金字塔</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ef4444, #3b82f6, #22c55e);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .comparison-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+            position: relative;
+        }
+
+        .pyramid-section {
+            flex: 1;
+            position: relative;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: sectionSlideIn 1s ease-out forwards;
+        }
+
+        .before-section {
+            animation-delay: 0.8s;
+        }
+
+        .after-section {
+            animation-delay: 1.2s;
+        }
+
+        @keyframes sectionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 0px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .before-section .section-title {
+            color: #ef4444;
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+
+        .after-section .section-title {
+            color: #22c55e;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .pyramid-container {
+            position: relative;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .pyramid-level {
+            position: relative;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pyramid-level:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Traditional Pyramid (Before) */
+        .before-section .pyramid-level {
+            background: linear-gradient(135deg, 
+                rgba(239, 68, 68, 0.3) 0%,
+                rgba(220, 38, 38, 0.2) 100%);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .before-section .pyramid-level:hover {
+            border-color: rgba(239, 68, 68, 0.6);
+        }
+
+        .before-section .level-1 {
+            width: 300px;
+            height: 60px;
+        }
+
+        .before-section .level-2 {
+            width: 240px;
+            height: 50px;
+        }
+
+        .before-section .level-3 {
+            width: 180px;
+            height: 45px;
+        }
+
+        .before-section .level-4 {
+            width: 120px;
+            height: 40px;
+        }
+
+        /* AI-Enabled Pyramid (After) */
+        .after-section .pyramid-level {
+            background: linear-gradient(135deg, 
+                rgba(34, 197, 94, 0.3) 0%,
+                rgba(16, 185, 129, 0.2) 100%);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .after-section .pyramid-level:hover {
+            border-color: rgba(34, 197, 94, 0.6);
+        }
+
+        .after-section .level-1 {
+            width: 300px;
+            height: 60px;
+        }
+
+        .after-section .level-2 {
+            width: 240px;
+            height: 50px;
+        }
+
+        .after-section .level-3 {
+            width: 180px;
+            height: 45px;
+        }
+
+        .after-section .level-4 {
+            width: 120px;
+            height: 40px;
+        }
+
+        .level-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .level-icon {
+            font-size: 18px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .level-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .level-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .level-description {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.2;
+            text-align: center;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .transformation-arrow {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            z-index: 10;
+            border: 4px solid #0f172a;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards, arrowPulse 2s ease-in-out infinite 3s;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .benefits-section {
+            margin-top: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2.5s forwards;
+        }
+
+        .benefits-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .benefit-card {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.8) 0%,
+                rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
+        .benefit-icon {
+            font-size: 24px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .benefit-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #22c55e;
+            margin-bottom: 10px;
+        }
+
+        .benefit-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .transformation-arrow {
+                position: static;
+                transform: none;
+                margin: 20px auto;
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .pyramid-container {
+                height: 400px;
+            }
+
+            .before-section .level-1,
+            .after-section .level-1 {
+                width: 280px;
+            }
+
+            .before-section .level-2,
+            .after-section .level-2 {
+                width: 240px;
+            }
+
+            .before-section .level-3,
+            .after-section .level-3 {
+                width: 200px;
+            }
+
+            .before-section .level-4,
+            .after-section .level-4 {
+                width: 160px;
+            }
+        }
+
+        /* Particles */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-30px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="main-title">金融分析民主化轉型</div>
+            <div class="subtitle">從專家壟斷到全民可及的智能革命</div>
+        </div>
+
+        <div class="comparison-container">
+            <div class="transformation-arrow">→</div>
+            
+            <!-- Before: Traditional Barrier -->
+            <div class="pyramid-section before-section">
+                <div class="section-header">
+                    <div class="section-title">傳統障礙模式</div>
+                    <div class="section-subtitle">需要多年經驗才能讀懂財務報告</div>
+                </div>
+
+                <div class="pyramid-container">
+                    <div class="pyramid-level level-4">
+                        <div class="level-content">
+                            <div class="level-icon">👑</div>
+                            <div class="level-text">
+                                <div class="level-title">頂尖專家</div>
+                                <div class="level-description">資深分析師與基金經理</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pyramid-level level-3">
+                        <div class="level-content">
+                            <div class="level-icon">🏦</div>
+                            <div class="level-text">
+                                <div class="level-title">機構投資者</div>
+                                <div class="level-description">銀行、保險公司、投信</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pyramid-level level-2">
+                        <div class="level-content">
+                            <div class="level-icon">💼</div>
+                            <div class="level-text">
+                                <div class="level-title">專業投資人</div>
+                                <div class="level-description">有經驗的個人投資者</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pyramid-level level-1">
+                        <div class="level-content">
+                            <div class="level-icon">❌</div>
+                            <div class="level-text">
+                                <div class="level-title">一般大眾</div>
+                                <div class="level-description">缺乏專業知識與分析工具</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- After: AI-Enabled Access -->
+            <div class="pyramid-section after-section">
+                <div class="section-header">
+                    <div class="section-title">AI 賦能模式</div>
+                    <div class="section-subtitle">複雜分析變得人人可及</div>
+                </div>
+
+                <div class="pyramid-container">
+                    <div class="pyramid-level level-4">
+                        <div class="level-content">
+                            <div class="level-icon">🚀</div>
+                            <div class="level-text">
+                                <div class="level-title">AI 增強專家</div>
+                                <div class="level-description">專注於策略而非數據處理</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pyramid-level level-3">
+                        <div class="level-content">
+                            <div class="level-icon">🏢</div>
+                            <div class="level-text">
+                                <div class="level-title">新創企業</div>
+                                <div class="level-description">更好地溝通風險輪廓</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pyramid-level level-2">
+                        <div class="level-content">
+                            <div class="level-icon">📱</div>
+                            <div class="level-text">
+                                <div class="level-title">小型投資人</div>
+                                <div class="level-description">享有機構級分析品質</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pyramid-level level-1">
+                        <div class="level-content">
+                            <div class="level-icon">✅</div>
+                            <div class="level-text">
+                                <div class="level-title">普羅大眾</div>
+                                <div class="level-description">AI 提供直觀易懂的財務洞察</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="benefits-section">
+            <div class="benefits-title">AI 民主化帶來的新機會</div>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">💡</div>
+                    <div class="benefit-title">小型投資人賦權</div>
+                    <div class="benefit-description">
+                        普通投資者也能獲得過去只有大型機構才能享有的專業級財務分析，
+                        讓投資決策更加明智。
+                    </div>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">🌟</div>
+                    <div class="benefit-title">新創企業優勢</div>
+                    <div class="benefit-description">
+                        年輕企業可以更清晰地向投資者展示自身的風險特徵，
+                        提升融資成功率和估值準確性。
+                    </div>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-title">分析師轉型</div>
+                    <div class="benefit-description">
+                        專業分析師從繁重的數據處理工作中解放，
+                        專注於戰略思考和創新性金融解決方案。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create background particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 12) + 's';
+            
+            document.getElementById('bgParticles').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 18000);
+        }
+
+        // Start particle system
+        setInterval(createParticle, 2000);
+
+        // Initial particles
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createParticle, i * 400);
+        }
+
+        // Add interactive effects to pyramid levels
+        const pyramidLevels = document.querySelectorAll('.pyramid-level');
+        pyramidLevels.forEach((level, index) => {
+            level.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.05)';
+                
+                // Add glow effect
+                const isBeforeSection = this.closest('.before-section');
+                if (isBeforeSection) {
+                    this.style.boxShadow = '0 20px 50px rgba(239, 68, 68, 0.3)';
+                } else {
+                    this.style.boxShadow = '0 20px 50px rgba(34, 197, 94, 0.3)';
+                }
+            });
+
+            level.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Add staggered animation to benefit cards
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        benefitCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 3000 + (index * 200));
+        });
+
+        // Animate pyramid levels on load
+        const levels = document.querySelectorAll('.pyramid-level');
+        levels.forEach((level, index) => {
+            level.style.opacity = '0';
+            level.style.transform = 'translateY(50px) scale(0.8)';
+            
+            setTimeout(() => {
+                level.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                level.style.opacity = '1';
+                level.style.transform = 'translateY(0) scale(1)';
+            }, 1500 + (index * 100));
+        });
+    </script>
+</body>
+</html>

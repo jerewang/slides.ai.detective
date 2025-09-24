@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI金融職涯發展路徑</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #22c55e, #3b82f6, #8b5cf6);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .opportunity-badge {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            border-radius: 25px;
+            padding: 8px 20px;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #22c55e;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+            }
+        }
+
+        .skills-section {
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .skill-card {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            backdrop-filter: blur(20px);
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: skillSlideIn 0.8s ease-out forwards;
+        }
+
+        .skill-card:nth-child(1) { 
+            border-color: rgba(34, 197, 94, 0.4);
+            animation-delay: 1.2s;
+        }
+
+        .skill-card:nth-child(2) { 
+            border-color: rgba(245, 158, 11, 0.4);
+            animation-delay: 1.4s;
+        }
+
+        .skill-card:nth-child(3) { 
+            border-color: rgba(139, 92, 246, 0.4);
+            animation-delay: 1.6s;
+        }
+
+        .skill-card:nth-child(4) { 
+            border-color: rgba(59, 130, 246, 0.4);
+            animation-delay: 1.8s;
+        }
+
+        @keyframes skillSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .skill-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .skill-card:hover::before {
+            opacity: 1;
+        }
+
+        .skill-ai::before {
+            background: linear-gradient(90deg, transparent, #22c55e, transparent);
+        }
+
+        .skill-finance::before {
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+        }
+
+        .skill-data::before {
+            background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+        }
+
+        .skill-design::before {
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        }
+
+        .skill-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 24px;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .skill-ai .skill-icon {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+            animation-delay: 0s;
+        }
+
+        .skill-finance .skill-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+            animation-delay: 0.3s;
+        }
+
+        .skill-data .skill-icon {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            animation-delay: 0.6s;
+        }
+
+        .skill-design .skill-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            animation-delay: 0.9s;
+        }
+
+        .skill-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .skill-ai .skill-title { color: #22c55e; }
+        .skill-finance .skill-title { color: #f59e0b; }
+        .skill-data .skill-title { color: #8b5cf6; }
+        .skill-design .skill-title { color: #3b82f6; }
+
+        .skill-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+        }
+
+        .pathway-section {
+            opacity: 0;
+            animation: slideInUp 1s ease-out 2s forwards;
+        }
+
+        .careers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .career-path {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 30px 25px;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: careerSlideIn 0.8s ease-out forwards;
+        }
+
+        .career-path:nth-child(1) { animation-delay: 2.3s; }
+        .career-path:nth-child(2) { animation-delay: 2.5s; }
+        .career-path:nth-child(3) { animation-delay: 2.7s; }
+        .career-path:nth-child(4) { animation-delay: 2.9s; }
+
+        @keyframes careerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .career-path:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+        }
+
+        .career-path::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #8b5cf6, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .career-path:hover::before {
+            opacity: 1;
+        }
+
+        .career-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 28px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 35px rgba(139, 92, 246, 0.6);
+            }
+        }
+
+        .career-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+        }
+
+        .career-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .skill-tag {
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(139, 92, 246, 0.2);
+            color: rgba(139, 92, 246, 0.9);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            font-weight: 500;
+        }
+
+        .connection-lines {
+            position: relative;
+            margin: 50px 0;
+            height: 80px;
+            opacity: 0;
+            animation: slideInUp 1s ease-out 1.5s forwards;
+        }
+
+        .flow-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                rgba(34, 197, 94, 0.6) 0%,
+                rgba(59, 130, 246, 0.6) 25%,
+                rgba(139, 92, 246, 0.6) 75%,
+                rgba(168, 85, 247, 0.8) 100%);
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            transform: translateY(-50%);
+            border-radius: 1px;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            animation: flowGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes flowGlow {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+            }
+        }
+
+        .flow-arrow {
+            position: absolute;
+            top: 50%;
+            right: 8%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            animation: arrowBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowBounce {
+            0%, 100% { transform: translateY(-50%) translateX(0); }
+            50% { transform: translateY(-50%) translateX(5px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .skills-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .careers-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .connection-lines {
+                height: 60px;
+            }
+        }
+
+        /* 粒子效果 */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(34, 197, 94, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-30px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="main-title">AI金融職涯發展路徑</div>
+            <div class="subtitle">掌握跨領域技能，開啟未來職業新機會</div>
+            <div class="opportunity-badge">
+                🚀 高需求技能組合 - 無限職涯可能
+            </div>
+        </div>
+
+        <div class="skills-section">
+            <div class="section-title">核心技能組合</div>
+            
+            <div class="skills-grid">
+                <div class="skill-card skill-ai">
+                    <div class="skill-icon">🤖</div>
+                    <div class="skill-title">AI & 機器學習</div>
+                    <div class="skill-description">
+                        深度學習、自然語言處理、演算法開發與模型優化專業知識
+                    </div>
+                </div>
+
+                <div class="skill-card skill-finance">
+                    <div class="skill-icon">💰</div>
+                    <div class="skill-title">金融領域知識</div>
+                    <div class="skill-description">
+                        投資分析、風險管理、財務建模與市場動態理解
+                    </div>
+                </div>
+
+                <div class="skill-card skill-data">
+                    <div class="skill-icon">📊</div>
+                    <div class="skill-title">數據分析能力</div>
+                    <div class="skill-description">
+                        大數據處理、統計分析、資料視覺化與洞察挖掘
+                    </div>
+                </div>
+
+                <div class="skill-card skill-design">
+                    <div class="skill-icon">🎨</div>
+                    <div class="skill-title">人機互動設計</div>
+                    <div class="skill-description">
+                        使用者體驗設計、介面開發與人性化AI系統設計
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="connection-lines">
+            <div class="flow-line"></div>
+            <div class="flow-arrow">→</div>
+        </div>
+
+        <div class="pathway-section">
+            <div class="section-title">職涯發展方向</div>
+            
+            <div class="careers-grid">
+                <div class="career-path">
+                    <div class="career-icon">🏦</div>
+                    <div class="career-title">FinTech AI 開發</div>
+                    <div class="career-description">
+                        在金融科技公司開發創新的AI解決方案，
+                        設計智能投資平台和風險管理系統
+                    </div>
+                    <div class="skill-tags">
+                        <div class="skill-tag">機器學習</div>
+                        <div class="skill-tag">金融產品</div>
+                        <div class="skill-tag">系統設計</div>
+                    </div>
+                </div>
+
+                <div class="career-path">
+                    <div class="career-icon">📈</div>
+                    <div class="career-title">投資分析師</div>
+                    <div class="career-description">
+                        在投資公司使用AI技術進行市場分析，
+                        發現投資機會和評估風險
+                    </div>
+                    <div class="skill-tags">
+                        <div class="skill-tag">量化分析</div>
+                        <div class="skill-tag">AI建模</div>
+                        <div class="skill-tag">市場研究</div>
+                    </div>
+                </div>
+
+                <div class="career-path">
+                    <div class="career-icon">⚖️</div>
+                    <div class="career-title">監管科技專家</div>
+                    <div class="career-description">
+                        開發RegTech解決方案，協助金融機構
+                        自動化合規檢查和風險監控
+                    </div>
+                    <div class="skill-tags">
+                        <div class="skill-tag">合規技術</div>
+                        <div class="skill-tag">自動化</div>
+                        <div class="skill-tag">風險控制</div>
+                    </div>
+                </div>
+
+                <div class="career-path">
+                    <div class="career-icon">🎓</div>
+                    <div class="career-title">學術研究員</div>
+                    <div class="career-description">
+                        在AI與金融交叉領域進行前沿研究，
+                        推動理論創新和實務應用發展
+                    </div>
+                    <div class="skill-tags">
+                        <div class="skill-tag">理論研究</div>
+                        <div class="skill-tag">論文發表</div>
+                        <div class="skill-tag">創新應用</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 創建背景粒子
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 12) + 's';
+            
+            // 技能主題的粒子顏色
+            const colors = [
+                'rgba(34, 197, 94, 0.3)',
+                'rgba(245, 158, 11, 0.3)',
+                'rgba(139, 92, 246, 0.3)',
+                'rgba(59, 130, 246, 0.3)'
+            ];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.getElementById('bgParticles').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 18000);
+        }
+
+        // 啟動粒子系統
+        setInterval(createParticle, 2000);
+
+        // 初始粒子
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createParticle, i * 400);
+        }
+
+        // 技能卡片互動效果
+        const skillCards = document.querySelectorAll('.skill-card');
+        skillCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const skillType = this.classList[1];
+                let glowColor;
+                
+                switch(skillType) {
+                    case 'skill-ai': glowColor = 'rgba(34, 197, 94, 0.3)'; break;
+                    case 'skill-finance': glowColor = 'rgba(245, 158, 11, 0.3)'; break;
+                    case 'skill-data': glowColor = 'rgba(139, 92, 246, 0.3)'; break;
+                    case 'skill-design': glowColor = 'rgba(59, 130, 246, 0.3)'; break;
+                    default: glowColor = 'rgba(139, 92, 246, 0.3)';
+                }
+                
+                this.style.boxShadow = `0 15px 35px ${glowColor}`;
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 職涯路徑卡片互動效果
+        const careerPaths = document.querySelectorAll('.career-path');
+        careerPaths.forEach(path => {
+            path.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+                
+                // 增強技能標籤效果
+                const tags = this.querySelectorAll('.skill-tag');
+                tags.forEach(tag => {
+                    tag.style.background = 'rgba(139, 92, 246, 0.3)';
+                    tag.style.color = '#a855f7';
+                    tag.style.borderColor = 'rgba(139, 92, 246, 0.5)';
+                });
+            });
+
+            path.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'rgba(168, 85, 247, 0.3)';
+                
+                // 恢復技能標籤效果
+                const tags = this.querySelectorAll('.skill-tag');
+                tags.forEach(tag => {
+                    tag.style.background = 'rgba(139, 92, 246, 0.2)';
+                    tag.style.color = 'rgba(139, 92, 246, 0.9)';
+                    tag.style.borderColor = 'rgba(139, 92, 246, 0.3)';
+                });
+            });
+        });
+
+        // 連接線動畫增強
+        const flowLine = document.querySelector('.flow-line');
+        setInterval(() => {
+            flowLine.style.background = 'linear-gradient(90deg, rgba(34, 197, 94, 0.8) 0%, rgba(59, 130, 246, 0.8) 25%, rgba(139, 92, 246, 0.8) 75%, rgba(168, 85, 247, 1) 100%)';
+            
+            setTimeout(() => {
+                flowLine.style.background = 'linear-gradient(90deg, rgba(34, 197, 94, 0.6) 0%, rgba(59, 130, 246, 0.6) 25%, rgba(139, 92, 246, 0.6) 75%, rgba(168, 85, 247, 0.8) 100%)';
+            }, 1000);
+        }, 3000);
+
+        // 機會徽章閃爍效果
+        const opportunityBadge = document.querySelector('.opportunity-badge');
+        setInterval(() => {
+            opportunityBadge.style.boxShadow = '0 0 35px rgba(34, 197, 94, 0.6)';
+            opportunityBadge.style.borderColor = 'rgba(34, 197, 94, 0.6)';
+            
+            setTimeout(() => {
+                opportunityBadge.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.3)';
+                opportunityBadge.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+            }, 1500);
+        }, 4000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 處理流程圖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Graphik', 'Graphik Web', 'Microsoft JhengHei', 'PingFang TC', 'Noto Sans CJK TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #22c55e, #3b82f6, #8b5cf6);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .pipeline-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 50px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.8s forwards;
+        }
+
+        .pipeline-step {
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(30, 41, 59, 0.95) 100%);
+            border-radius: 16px;
+            padding: 25px 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            border: 2px solid;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: stepSlideIn 0.8s ease-out forwards;
+        }
+
+        .pipeline-step:nth-child(1) { 
+            border-color: rgba(34, 197, 94, 0.4);
+            animation-delay: 1.2s;
+        }
+
+        .pipeline-step:nth-child(2) { 
+            border-color: rgba(245, 158, 11, 0.4);
+            animation-delay: 1.4s;
+        }
+
+        .pipeline-step:nth-child(3) { 
+            border-color: rgba(168, 85, 247, 0.4);
+            animation-delay: 1.6s;
+        }
+
+        .pipeline-step:nth-child(4) { 
+            border-color: rgba(59, 130, 246, 0.4);
+            animation-delay: 1.8s;
+        }
+
+        .pipeline-step:nth-child(5) { 
+            border-color: rgba(239, 68, 68, 0.4);
+            animation-delay: 2.0s;
+        }
+
+        @keyframes stepSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pipeline-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .pipeline-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pipeline-step:hover::before {
+            opacity: 1;
+        }
+
+        .step-bert::before {
+            background: linear-gradient(90deg, transparent, #22c55e, transparent);
+        }
+
+        .step-contrastive::before {
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+        }
+
+        .step-transfer::before {
+            background: linear-gradient(90deg, transparent, #a855f7, transparent);
+        }
+
+        .step-explainable::before {
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        }
+
+        .step-human::before {
+            background: linear-gradient(90deg, transparent, #ef4444, transparent);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .step-icon {
+            font-size: 32px;
+            margin-right: 15px;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .pipeline-step:nth-child(2) .step-icon { animation-delay: 0.5s; }
+        .pipeline-step:nth-child(3) .step-icon { animation-delay: 1s; }
+        .pipeline-step:nth-child(4) .step-icon { animation-delay: 1.5s; }
+        .pipeline-step:nth-child(5) .step-icon { animation-delay: 2s; }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .step-bert .step-title { 
+            color: #22c55e; 
+            text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); 
+        }
+
+        .step-contrastive .step-title { 
+            color: #f59e0b; 
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); 
+        }
+
+        .step-transfer .step-title { 
+            color: #a855f7; 
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5); 
+        }
+
+        .step-explainable .step-title { 
+            color: #3b82f6; 
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); 
+        }
+
+        .step-human .step-title { 
+            color: #ef4444; 
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); 
+        }
+
+        .step-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .step-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        .flow-arrow {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            margin: -15px 0;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            animation: arrowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+            }
+        }
+
+        .output-section {
+            margin-top: 40px;
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(135deg, 
+                rgba(34, 197, 94, 0.1) 0%,
+                rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2.5s forwards;
+        }
+
+        .output-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #22c55e;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+        }
+
+        .output-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 28px;
+            }
+
+            .pipeline-step {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .step-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .step-title {
+                font-size: 18px;
+            }
+
+            .step-description {
+                font-size: 14px;
+            }
+        }
+
+        /* Particles */
+        .bg-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(-30px) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(-10vh) translateX(30px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="main-title">AI 技術處理流程</div>
+            <div class="subtitle">金融智能分析的核心技術架構</div>
+        </div>
+
+        <div class="pipeline-container">
+            <div class="pipeline-step step-bert">
+                <div class="step-header">
+                    <div class="step-icon">🧠</div>
+                    <div>
+                        <div class="step-title">BERT 語言模型</div>
+                        <div class="step-subtitle">像人類一樣理解上下文</div>
+                    </div>
+                </div>
+                <div class="step-description">
+                    使用先進的 BERT 模型深度理解財務文件的語義和上下文關係，
+                    準確捕捉複雜的金融術語和表達方式。
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <div class="pipeline-step step-contrastive">
+                <div class="step-header">
+                    <div class="step-icon">🔍</div>
+                    <div>
+                        <div class="step-title">對比學習</div>
+                        <div class="step-subtitle">訓練 AI 發現相似風險</div>
+                    </div>
+                </div>
+                <div class="step-description">
+                    透過對比學習技術，讓 AI 系統學會識別不同公司間的相似風險模式，
+                    發現傳統方法難以察覺的潛在關聯。
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <div class="pipeline-step step-transfer">
+                <div class="step-header">
+                    <div class="step-icon">🎯</div>
+                    <div>
+                        <div class="step-title">遷移學習</div>
+                        <div class="step-subtitle">將通用 AI 適配至金融任務</div>
+                    </div>
+                </div>
+                <div class="step-description">
+                    運用遷移學習將通用語言模型適配到特定的金融分析任務，
+                    大幅提升模型在財務領域的專業表現。
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <div class="pipeline-step step-explainable">
+                <div class="step-header">
+                    <div class="step-icon">💡</div>
+                    <div>
+                        <div class="step-title">可解釋 AI</div>
+                        <div class="step-subtitle">清楚展示連結存在的原因</div>
+                    </div>
+                </div>
+                <div class="step-description">
+                    提供透明的推理過程，詳細說明 AI 如何得出結論，
+                    讓使用者理解和驗證每個風險連結的依據。
+                </div>
+            </div>
+
+            <div class="flow-arrow">↓</div>
+
+            <div class="pipeline-step step-human">
+                <div class="step-header">
+                    <div class="step-icon">🤝</div>
+                    <div>
+                        <div class="step-title">人在迴路中</div>
+                        <div class="step-subtitle">從使用者回饋持續改進</div>
+                    </div>
+                </div>
+                <div class="step-description">
+                    整合專家意見和使用者回饋，持續優化模型性能，
+                    確保 AI 系統與人類專業判斷保持一致。
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="output-title">輸出結果</div>
+                <div class="output-description">
+                    經過完整處理流程後，系統產出準確、可解釋、可信賴的企業風險關聯分析，
+                    為投資決策提供強有力的智能支援。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create background particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 6 + 12) + 's';
+            
+            document.getElementById('bgParticles').appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 18000);
+        }
+
+        // Start particle system
+        setInterval(createParticle, 2000);
+
+        // Initial particles
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createParticle, i * 400);
+        }
+
+        // Add enhanced hover effects
+        const steps = document.querySelectorAll('.pipeline-step');
+        steps.forEach(step => {
+            step.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                
+                // Add specific glow based on step type
+                const stepClass = this.classList[1];
+                let glowColor;
+                
+                switch(stepClass) {
+                    case 'step-bert': glowColor = 'rgba(34, 197, 94, 0.3)'; break;
+                    case 'step-contrastive': glowColor = 'rgba(245, 158, 11, 0.3)'; break;
+                    case 'step-transfer': glowColor = 'rgba(168, 85, 247, 0.3)'; break;
+                    case 'step-explainable': glowColor = 'rgba(59, 130, 246, 0.3)'; break;
+                    case 'step-human': glowColor = 'rgba(239, 68, 68, 0.3)'; break;
+                    default: glowColor = 'rgba(59, 130, 246, 0.3)';
+                }
+                
+                this.style.boxShadow = `0 20px 40px ${glowColor}`;
+            });
+
+            step.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
