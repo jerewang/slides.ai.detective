@@ -81,9 +81,9 @@
             box-shadow: 0 0 20px rgba(118, 185, 0, 0.4);
         }
 
-        .wabtec-logo {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        .hubbell-logo {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
             animation-delay: 0.3s;
         }
 
@@ -142,7 +142,6 @@
             25%, 75% { opacity: 0.5; }
         }
 
-        /* 揭示階段 */
         .reveal-stage {
             display: none;
             opacity: 0;
@@ -265,7 +264,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="title">這兩家公司有什麼共同點？</div>
+        <div class="title">這兩家公司有什麼共同點?</div>
         
         <div class="companies-row">
             <div class="company">
@@ -275,9 +274,9 @@
             </div>
             
             <div class="company">
-                <div class="company-logo wabtec-logo">WABTEC</div>
-                <div class="company-name">Wabtec (WAB)</div>
-                <div class="company-desc">先進鐵路和運輸解決方案</div>
+                <div class="company-logo hubbell-logo">HUBB</div>
+                <div class="company-name">Hubbell Inc. (HUBB)</div>
+                <div class="company-desc">全球電氣行業的知名品牌之一</div>
             </div>
         </div>
 
@@ -290,21 +289,25 @@
         <div class="reveal-stage" id="revealStage">
             <div class="connection-line"></div>
             <div class="connection-badge">
-                ⚠️ 半導體供應鏈中斷 (2022)
+                ⚠️ 美國稅務規定 & 出口管制
             </div>
             
             <div class="impact-summary">
                 <div class="impact-item">
-                    <div class="impact-icon">🎮</div>
-                    <div class="impact-text">Nvidia</div>
-                    <div class="impact-detail"><span class="highlight">GPU價格暴漲</span>，晶片短缺影響生產</div>
+                    <div class="impact-icon">📋</div>
+                    <div class="impact-text">稅務風險 (Tax)</div>
+                    <div class="impact-detail">兩家公司都受到<span class="highlight">美國稅務規定</span>影響</div>
                 </div>
                 
                 <div class="impact-item">
-                    <div class="impact-icon">🚄</div>
-                    <div class="impact-text">Wabtec</div>
-                    <div class="impact-detail"><span class="highlight">鐵路元件短缺</span>，製造延遲</div>
+                    <div class="impact-icon">🌐</div>
+                    <div class="impact-text">出口管制 (Export Control)</div>
+                    <div class="impact-detail">都面臨<span class="highlight">出口管制政策</span>的挑戰</div>
                 </div>
+            </div>
+            
+            <div style="margin-top: 25px; padding: 15px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.85);">
+                💡 這兩項風險因素造成 NVDA 與 HUBB 在風險程度上<span class="highlight">高度相關</span>
             </div>
         </div>
     </div>
@@ -340,12 +343,10 @@
             }, 300);
         }
 
-        // 添加淡出動畫
         const style = document.createElement('style');
         style.textContent = `@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }`;
         document.head.appendChild(style);
 
-        // 事件監聽
         document.body.addEventListener('click', (e) => {
             if (!isRevealed && e.target !== resetBtn) reveal();
         });
